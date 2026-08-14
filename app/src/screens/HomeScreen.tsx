@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, Text, View } from 'react-native';
 import { Card } from '../components/Card';
 import { fetchHealth } from '../services/apiService';
 
@@ -28,11 +28,11 @@ export function HomeScreen(): React.JSX.Element {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>HWN Tracker</Text>
+    <View className="flex-1 items-center justify-center">
+      <Text className="mb-2 text-2xl font-semibold">HWN Tracker</Text>
       <Card>
-        <Text style={styles.label}>Backend status</Text>
-        <Text style={styles.value}>{describe(backendState)}</Text>
+        <Text className="text-xs opacity-60">Backend status</Text>
+        <Text className="mb-3 text-base">{describe(backendState)}</Text>
         <Button title="Check backend" onPress={checkBackend} />
       </Card>
     </View>
@@ -51,24 +51,3 @@ function describe(state: BackendState): string {
       return `Error: ${state.message}`;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 12,
-    opacity: 0.6,
-  },
-  value: {
-    fontSize: 16,
-    marginBottom: 12,
-  },
-});

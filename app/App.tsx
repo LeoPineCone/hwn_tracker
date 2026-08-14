@@ -10,6 +10,7 @@ import {
   SafeAreaView,
 } from 'react-native-safe-area-context';
 import { HomeScreen } from './src/screens/HomeScreen';
+import './global.css';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -17,7 +18,7 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView className="flex-1">
         <HomeScreen />
       </SafeAreaView>
     </SafeAreaProvider>
