@@ -42,8 +42,8 @@ be loaded. Those exclusions are deliberate; see Decision Log.
       added to `app/DATA.md`, closing out the document's content. (2026-08-20)
 - [x] Milestone 4, step 2 of 2: cross-links added from `ARCHITECTURE.md`, `AGENTS.md`,
       `docs/app.md`, and `app/DESIGN.md`. (2026-08-20)
-- [ ] ExecPlan finalized: Outcomes & Retrospective written, plan moved from
-      `docs/exec-plans/active/` to `docs/exec-plans/completed/`.
+- [x] ExecPlan finalized: Outcomes & Retrospective written, plan moved from
+      `docs/exec-plans/active/` to `docs/exec-plans/completed/`. (2026-08-20)
 
 ## Surprises & Discoveries
 
@@ -314,6 +314,16 @@ each one changes what `app/DATA.md` must say, so the executor must preserve them
   one relationship row rather than several field rows); the lower actual count reflects that the
   content came out slightly more compact than estimated, not that any row is missing a marker.
 
+- Observation: A full top-to-bottom read of the finished `app/DATA.md` (part of the Milestone 5
+  finalization pass) found one piece of staleness: the opening lead paragraph still read
+  "starting with **Station**, and continuing in later work with **Collection**..." — accurate
+  while the document was being drafted incrementally across Milestones 1–4, but inaccurate once
+  the document was complete. Fixed via a `quickfix` delegation to "covering **Station**,
+  **Collection**, and the completion rules...". No other staleness or inconsistency was found on
+  the full read-through; the four grep-based acceptance checks (confidence-marker count 18,
+  zero TypeScript keywords, four DATA.md cross-link hits, all four relative links resolving) and
+  both `npm test` runs (root: 2 passed; `app/`: 1 passed, matching baseline exactly) all pass.
+
 - Decision: The Code-Quality Gate is skipped for every milestone's Commit Gate in this plan.
   Rationale: this entire ExecPlan is documentation-only, as stated in its own Purpose section —
   "No station list, no collection list, no TypeScript, no runtime code, and no storage
@@ -339,9 +349,62 @@ each one changes what `app/DATA.md` must say, so the executor must preserve them
 
 ## Outcomes & Retrospective
 
-To be written when the final milestone completes. Compare the delivered `app/DATA.md` against the
-Purpose above: can a reader answer the four orientation questions from that section using only
-that file?
+All four milestones landed as planned, in five commits (Milestone 4 split into two: content, then
+cross-links). `app/DATA.md` now runs 257 lines with eight top-level sections (`Conventions`,
+`Station`, `Collection`, `Completion Rules and Badges`, `Entity Relationships`, `Worked Example`,
+`Open Questions — Not Yet Decided`, plus the opening lead/Status text) and eighteen `**Confirmed**`
+/ `**Assumed**` / `**Missing**` markers, one per field-table row plus the three convention
+definitions — every row carries exactly one, with zero unmarked rows.
+
+Checking against the Purpose section's own test — can a reader answer the five orientation
+questions using `app/DATA.md` alone, with no other file open:
+
+- *"What identifies a station?"* — Yes. The Station field table's first row: `number`, the
+  official HWN station number, explicitly **not** usable as an array index.
+- *"Can a station be in two collections at once?"* — Yes. The Collection section's Membership
+  subsection states the many-to-many cardinality and proves it with station 22 (Brocken), present
+  in both Harzer Hexenstieg and Brocken-Runde.
+- *"What exactly does the Bronze badge require, and how is progress toward it computed?"* — Yes.
+  Completion Rules and Badges states Bronze is "any 8 stations out of Harzer Wanderkaiser," and
+  "Derived, not stored" gives the exact progress/target/percentage/status formulas, cross-checked
+  against the prototype's own expressions.
+- *"How would a sixth badge be added?"* — Yes. Stated explicitly in "Today's five tiers" and
+  restated in "Open Questions": as data (a new Collection with an any-N rule), not a code change.
+- *"Do we know each station's real latitude and longitude?"* — Yes, and honestly: the Station
+  field table marks `latitude`/`longitude` **Missing**, flagged as "the single most important row
+  in this table," with the prototype's `x`/`y` fake-map percentages explained so nobody mistakes
+  them for real coordinates.
+
+**What went well.** Delegating one milestone (and, for Milestone 4, one half-milestone) per
+subagent call, each with an explicit instruction to independently re-verify every prototype line
+citation via `grep -n`/`sed -n` rather than trust the delegation prompt, caught real errors before
+they reached the document: a one-line citation off-by-one in Milestone 1 (caught by the executor's
+own spot-check), and, more substantively, a wrong assumption baked into this very plan's own
+Milestone 3 prose — that the derived status label reads `"{remaining} offen"` — which the
+Milestone 3 delegate caught by re-deriving the correct expression (`"Noch {remaining} Stempel"`)
+directly from the prototype source rather than trusting the plan. The Milestone 4 Worked Example
+delegate went further and found an additional, previously unrecorded inconsistency in the
+prototype's own mock data (`NEEDLES`'s hardcoded `have` values happening to equal `req` for
+Bronze/Silber/Gold by coincidence, not derivation) and used it as a concrete illustration in the
+document. Every citation the executor independently spot-checked against
+`app/design/Harzer Wandernadel.dc.html` (roughly two dozen line numbers across all milestones)
+turned out correct after the one Milestone 1 fix.
+
+**What deviated from the plan.** Two small, disclosed deviations, both recorded in the Decision Log
+above: (1) the executor corrected one already-verified citation typo directly rather than
+round-tripping it through a `quickfix` delegation, and (2) the Code-Quality Gate was skipped for
+every milestone's Commit Gate, justified once in the Decision Log because this entire plan is
+documentation-only and touches no production code — every commit's regression guard was instead
+`npm test` at the root and inside `app/`, both of which matched the captured baseline (2 passed, 1
+passed) after every single commit, with no lockfile ever touched. The plan's own "at least 20"
+confidence-marker estimate in its Concrete Steps section turned out to be a slight overestimate
+(actual: 18) once the real table shapes were drafted — not a defect, since the formal acceptance
+criterion (every field-table row marked exactly once) is satisfied precisely.
+
+**Net result.** A contributor picking up any future Karte or Erfolge story now has one file to
+read. The two-entity model (Station, Collection-with-a-completion-rule) that supersedes issue #1's
+three-entity framing is written down once, with its rationale, rather than living only in this
+plan's Decision Log or in a domain owner's head.
 
 ## Context and Orientation
 
