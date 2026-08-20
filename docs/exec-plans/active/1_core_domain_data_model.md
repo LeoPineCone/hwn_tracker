@@ -37,7 +37,7 @@ be loaded. Those exclusions are deliberate; see Decision Log.
       (2026-08-20)
 - [x] Milestone 2: Collection section (membership, many-to-many) added to `app/DATA.md`.
       (2026-08-20)
-- [ ] Milestone 3: Completion rules and badge tiers as a kind of collection.
+- [x] Milestone 3: Completion rules and badge tiers as a kind of collection. (2026-08-20)
 - [ ] Milestone 4: Relationships, worked example, Open Questions, and cross-links from
       `ARCHITECTURE.md`, `AGENTS.md`, `docs/app.md`, and `app/DESIGN.md`.
 - [ ] ExecPlan finalized: Outcomes & Retrospective written, plan moved from
@@ -272,6 +272,23 @@ each one changes what `app/DATA.md` must say, so the executor must preserve them
   139) checked out exactly on independent `sed -n` re-verification. Noted here because Milestone 1
   needed one correction and Milestone 2 did not, suggesting the "verify every citation yourself"
   instruction in the delegation prompt is working as intended.
+
+- Observation: This plan's own Milestone 3 prose (line ~624 of the plan as originally written)
+  states the derived status label is `"{remaining} offen"` while in progress. That is wrong —
+  it conflicts with the plan's own Artifacts and Notes section, which correctly reproduces the
+  prototype's actually-derived expression: `ndStatus: N.done ? ('Ziel erreicht am ' + N.date) :
+  ('Noch ' + Math.max(0, N.req - N.have) + ' Stempel')` (prototype line 954). The delegate agent
+  caught this by re-verifying against the source file as instructed rather than trusting the
+  prompt, and wrote `app/DATA.md` with the correct derivation: "Noch {remaining} Stempel" while
+  in progress. It additionally documented that a *separate*, hardcoded-per-tier `status` string
+  on `NEEDLES` (e.g. `'4 offen'`) does read "{N} offen" but is used only in the collections grid
+  view (prototype line 883/306), not in the detail-sheet's derived computation — so both facts
+  are now recorded, correctly attributed to their respective prototype fields, rather than the
+  plan's conflated version. Independently re-verified by the executor via `sed -n` against lines
+  950–961 and 880–884/304–308 of the prototype; the correction is accurate.
+  Consequence: this plan's own Milestone 3 section (not `app/DATA.md`) contains a latent error in
+  its prose that the executor is flagging here rather than silently editing, since the plan
+  section itself is not being rewritten as part of execution.
 
 - Decision: The Code-Quality Gate is skipped for every milestone's Commit Gate in this plan.
   Rationale: this entire ExecPlan is documentation-only, as stated in its own Purpose section —

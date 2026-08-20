@@ -121,4 +121,74 @@ The Karte filter sheet currently allows selecting at most one collection at a ti
 
 ---
 
-Completion Rules — including how a badge tier's collection is distinguished from a themed collection's — follow in later work.
+## Completion Rules and Badges
+
+A Collection is not complete merely because a hiker has visited its members — each Collection carries a **completion rule** that says what actually earns it. Everything known today is covered by two kinds of rule, and they should be read as two cases of one mechanism rather than as two unrelated features bolted together:
+
+- **All members** — the hiker must visit every station in the collection. This is the themed-trail case: Harzer Hexenstieg is earned by stamping all ten of its member stations (`[22,25,27,30,33,59,62,89,92,101]`, line 697).
+- **Any N of a source collection** — the hiker must visit any N stations drawn from another collection's members, with no requirement about *which* ones. This is the badge-tier case, per the domain owner's framing: Bronze means any 8 stations out of the **Harzer Wanderkaiser** collection, where Harzer Wanderkaiser is the collection holding every official station. Silber, Gold, and Wanderkönig work the same way, each with a different value of N.
+
+### The mechanism generalizes
+
+The payoff of treating badge tiers and themed trails as one entity is that the source collection for an any-N rule can be *any* collection, not necessarily the all-stations one. "Any 5 of the Harzer Hexenstieg" is expressible today without inventing anything new — it is the same rule shape as Bronze, just pointed at a different source collection.
+
+This generality creates one consistency choice worth naming: Harzer Wanderkaiser itself could be described either as "all members of itself" or as "any N of itself, where N equals its own size." This document recommends the all-members form, because it needs no number and so cannot fall out of step with reality when stations are added or retired — an any-N form pinned to a hardcoded count would silently stop meaning "everything" the moment the source collection's membership changed.
+
+### The `completionRule` field
+
+| Field | Type | Confidence | Notes |
+|---|---|---|---|
+| `completionRule` | structured value | **Assumed** | The prototype has no such field. It hardcodes the all-members/any-N distinction structurally instead, by keeping badge tiers in a separate `NEEDLES` array (line 715 onward) rather than as entries in `COLLECTIONS` (line 695 onward) — two parallel arrays standing in for what this document treats as one field on one entity. |
+
+In plain words, a completion rule has a *kind* — all-members or any-N — and, only for the any-N kind, it additionally carries a required count and a reference to a source collection (by that collection's `id`, per the Collection section's identity field). An all-members rule needs nothing beyond its kind: its target is always "however many stations this collection currently has," per "Counts are derived, not stored" above.
+
+### Today's five tiers — illustrative data, not a schema constraint
+
+The table below reproduces what the prototype currently encodes as `NEEDLES`. It is today's data, nothing more: the model must not hardcode "there are five tiers" anywhere, and adding a sixth tier — or a themed collection with an any-N rule of its own — is a data change, not a code change.
+
+| Collection | Rule | Source collection | Prototype origin |
+|---|---|---|---|
+| Bronze | any 8 | Harzer Wanderkaiser | `NEEDLES[0]`, `req:8` (line 716) |
+| Silber | any 16 | Harzer Wanderkaiser | `NEEDLES[1]`, `req:16` (line 718) |
+| Gold | any 24 | Harzer Wanderkaiser | `NEEDLES[2]`, `req:24` (line 720) |
+| Wanderkönig | any 50 | Harzer Wanderkaiser | `NEEDLES[3]`, `req:50` (line 722) |
+| Harzer Wanderkaiser | all members | — | `NEEDLES[4]`, `req:222` (line 724) — the prototype writes this requirement as a hardcoded literal integer, the same `222` that recurs elsewhere in the prototype's station-count literals (see "Counts are derived, not stored" above) |
+
+This model replaces that hardcoded `222` literal with an all-members rule instead, per the no-fixed-cardinality principle already established in the Collection section: nothing in the model may assume any fixed total, and Wanderkaiser's target should be counted from loaded stations, never stored as a number.
+
+### `earnedOn` and hiker progress
+
+| Field | Type | Confidence | Notes |
+|---|---|---|---|
+| `earnedOn` (prototype `date`) | date | **Confirmed** as a concept | The prototype's `NEEDLES` entries carry a `date` value that is a literal string when a tier is earned (e.g. Bronze's `'02.05.2025'`, line 716) and `null` when it is not (Wanderkönig and Wanderkaiser, lines 722 and 724). This confirms the absent/null-when-unearned shape this document recommends generally. |
+
+One inconsistency worth flagging explicitly: the date format used here is `DD.MM.YYYY` (four-digit year — e.g. `'02.05.2025'`, line 716), which differs from the station's `stampedOn` format `DD.MM.YY` established in the Station section (two-digit year, e.g. the prototype appending the literal `'25'`). Both are prototype presentation formatting, not part of the stored shape, but the two disagree with each other within the same prototype — a detail a future implementation should pick one convention for, not inherit both.
+
+Being hiker progress rather than reference data, `earnedOn` belongs in the same category as a station's `visited` flag — see "Which data is shipped, which is the hiker's" in the Station section above: this is on-device state created by the hiker's own progress, not shipped reference data.
+
+### Derived, not stored
+
+This is this section's main practical contribution: every value below is something the prototype hardcodes as a mock literal in `NEEDLES`, and none of them should be stored in the real model. All of them are derived at read time, for **every** Collection regardless of rule kind — an all-members collection and an any-N collection are computed the same way, just with a different pool and a different target:
+
+- **Progress** is a count of the hiker's visited stations within the rule's pool: the collection's own members for an all-members rule, the source collection's members for an any-N rule.
+- **Target** is the collection's own member count for an all-members rule, or N for an any-N rule — counted, never stored.
+- **Earned state** is progress ≥ target.
+- **Remaining count** is target minus progress, floored at zero. The prototype's own expression: `Math.max(0, N.req - N.have)` (line 953).
+- **Percentage**, shown on the detail sheet's progress bar, is progress *capped at the target*, divided by the target: `Math.round(Math.min(N.have, N.req) / N.req * 100) + '%'` (line 952). The cap matters — without it, an over-achieving hiker (one whose `have` exceeds `req`, which the underlying count could produce for an any-N rule) could show a percentage past 100%.
+- **Status label**: the detail sheet's actually-derived label (`ndStatus`, rendered at line 578) is built as `N.done ? ('Ziel erreicht am ' + N.date) : ('Noch ' + Math.max(0, N.req - N.have) + ' Stempel')` (line 954) — i.e. "Noch {remaining} Stempel" while in progress, "Ziel erreicht am {date}" once earned. Note this is a correction to an assumption worth naming explicitly: `NEEDLES` also carries its own separate, hardcoded `status` string per tier (e.g. `'4 offen'`, `'176 offen'`, `'ziel erreicht'` — lines 716–724), used only in the collections grid view (`n.status`, line 883, rendered line 306). That field reads "{N} offen", not the detail sheet's "Noch {N} Stempel" — the two are different fields in the prototype and happen to disagree in wording despite describing the same fact. `app/DESIGN.md` (line 222) documents the "Ziel erreicht am {date}" copy as settled and is the copy-of-record for it; treat its "{reqLeft} offen" phrasing there as inherited from the same grid-view literal rather than as a second, independently-derived expression.
+
+A future contributor should not reintroduce a separate or parallel code path just for badges: this derivation list applies identically to every Collection, whatever its rule kind, and that uniformity is the concrete benefit of treating tiers and themed trails as one entity.
+
+### The region sentences are flavour text
+
+The Silber tier's description reads "Sechzehn Stempel, verteilt über mindestens zwei Regionen" ("sixteen stamps, spread over at least two regions" — `NEEDLES[1].desc`, line 719), and the Wanderkönig description reads "…Hochharz, Ostharz und Südharz müssen alle vertreten sein" ("…Hochharz, Ostharz, and Südharz must all be represented" — `NEEDLES[3].desc`, line 723).
+
+Both sentences read like specifications. Neither is one. No field encodes a region requirement, no prototype code enforces one, and this is confirmed settled by the domain owner — not an open question awaiting an answer. An any-N rule is a plain count; progress is a single number; no rule anywhere in this model reads a station's `region` field (which, per the Station section, is display data only). This subsection exists specifically to stop a future contributor from implementing the description text as a literal region constraint — it is a realistic mistake to make, since the copy strongly implies otherwise.
+
+### Presentation values, deliberately not repeated here
+
+Per-tier metal and ring colours (`metal` and `ring` fields in `NEEDLES`, e.g. Bronze's `metal:'#b2622d'`, `ring:'#ffc6a5'`, line 716) are presentation values, not domain data. They are already mapped to design tokens in `app/DESIGN.md`'s "Collection/badge card" table (line 212 onward, Fill/Ring per tier) and are deliberately not repeated here.
+
+---
+
+Entity Relationships, a Worked Example, and Open Questions follow in later work.
