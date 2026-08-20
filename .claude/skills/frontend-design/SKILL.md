@@ -31,4 +31,5 @@ The app follows the **Organic** design system (warm cream/terracotta/sage palett
 ## Resources
 
 - `app/DESIGN.md` — full token table, Tailwind implementation snippet, component patterns, open questions
+- `app/design/` — the design source material `app/DESIGN.md` is derived from: the Organic design system (`_ds/organic/`), the interactive prototype (`Harzer Wandernadel.dc.html`), its standalone build and the static mockups (`screenshots/`)
 - `docs/app.md` — code conventions (structure, testing) for `app/`

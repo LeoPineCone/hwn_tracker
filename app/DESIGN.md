@@ -2,7 +2,7 @@
 
 Design tokens and UI conventions for the React Native app (`app/`). Styling is done via NativeWind (`className` props, Tailwind config in `app/tailwind.config.js`) — see [docs/app.md](../docs/app.md) for the code conventions and [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview) for the product this UI serves.
 
-**Status:** the app is still at scaffold stage (one screen, one `Card` component, default Tailwind theme). This document defines the tokens new screens and components should use to match the approved mockups — it is not describing an already-built design system. Source of truth for every value below is [`docs/design/DESIGN.md`](../docs/design/DESIGN.md) (the product's design brief), the **Organic** design system it's built on (`docs/design/_ds/organic/styles.css` + `theme.json`), and the interactive prototype `docs/design/Harzer Wandernadel.dc.html` (its inline styles and JS data objects — `NEEDLES`, `ICONS`, `themeVars` — are where several values below, including the full dark-mode ramp, come from), cross-checked against the static mockups in `docs/design/screenshots/`. If a value here and one of those source files ever disagree, the source file wins — update this doc to match.
+**Status:** the app is still at scaffold stage (one screen, one `Card` component, default Tailwind theme). This document defines the tokens new screens and components should use to match the approved mockups — it is not describing an already-built design system. This is the **only** design doc for the project — there used to be a second one at `docs/design/DESIGN.md`; it's been merged in here and removed so design guidance has one home. Design source material lives alongside it in [`app/design/`](design/): the **Organic** design system (`design/_ds/organic/styles.css` + `theme.json`), the interactive prototype `design/Harzer Wandernadel.dc.html` and its self-contained build `design/screenshots/stand_allone_app.html` (their inline styles and JS data objects — `NEEDLES`, `ICONS`, `themeVars` — are where several values below, including the full dark-mode ramp, come from), and the static mockups in `design/screenshots/`. If a value here and one of those source files ever disagree, the source file wins — update this doc to match.
 
 ---
 
@@ -19,7 +19,7 @@ The mockups replace the earlier flat/cool scaffold direction with a warm, rounde
 
 ## Color Tokens
 
-Base roles (from `docs/design/_ds/organic/styles.css`):
+Base roles (from `design/_ds/organic/styles.css`):
 
 | Token | Value | Usage |
 |---|---|---|
@@ -48,7 +48,7 @@ accent-2-700 #56633f   accent-2-800 #3d472b   accent-2-900 #272e1b
 
 ### Dark Mode
 
-Dark mode **is** specified — it's a full second ramp shipped in the prototype (`docs/design/Harzer Wandernadel.dc.html`), not something to invent. Important behavioral detail: in the prototype it's a **manual in-app toggle** ("Dunkler Modus" on the Profil screen, persisted, default off), not an automatic OS-`prefers-color-scheme` switch. `App.tsx` currently derives its `StatusBar` style from `useColorScheme()` alone — that needs to become app-level state (e.g. a settings store) that Profil's toggle writes to and every screen reads, with OS scheme only as the initial default if desired. Don't wire this as a pure `dark:` media-query mirror without a Profil control.
+Dark mode **is** specified — it's a full second ramp shipped in the prototype (`design/Harzer Wandernadel.dc.html`), not something to invent. Important behavioral detail: in the prototype it's a **manual in-app toggle** ("Dunkler Modus" on the Profil screen, persisted, default off), not an automatic OS-`prefers-color-scheme` switch. `App.tsx` currently derives its `StatusBar` style from `useColorScheme()` alone — that needs to become app-level state (e.g. a settings store) that Profil's toggle writes to and every screen reads, with OS scheme only as the initial default if desired. Don't wire this as a pure `dark:` media-query mirror without a Profil control.
 
 ```
 bg #221d18            surface #2b2420          text #f2e8d8
@@ -193,9 +193,9 @@ Borders remain for dividers and unselected/outline states (`border-text/16`, i.e
 
 ## Layout Patterns
 
-These come directly from the mockups (`docs/design/screenshots/`) and `docs/design/DESIGN.md`; read that file for the full German domain vocabulary and copy rules.
+These come directly from the mockups (`design/screenshots/`) and the interactive prototype (`design/Harzer Wandernadel.dc.html`) — see Language & Tone below for the German domain vocabulary and copy rules.
 
-**Tab bar** — 3 tabs, matching [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview)'s MVP scope: **Karte** (map, includes a "Stempel" grid toggle in-screen), **Erfolge** (badge/collection progress), **Profil** (account + settings). Active tab: icon on a `rounded-full` `accent-2-200`-ish tint pill; inactive: plain `neutral-600` icon + label, no fill. Icons are Lucide-style, stroke-width **2.75**, `stroke-linecap: round`, and the exact path data is already vendored in the prototype's `ICONS` constant (`docs/design/Harzer Wandernadel.dc.html`) — copy those paths rather than re-drawing icons from scratch. Rendering them needs `react-native-svg`, not yet installed — see Open Questions.
+**Tab bar** — 3 tabs, matching [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview)'s MVP scope: **Karte** (map, includes a "Stempel" grid toggle in-screen), **Erfolge** (badge/collection progress), **Profil** (account + settings). Active tab: icon on a `rounded-full` `accent-2-200`-ish tint pill; inactive: plain `neutral-600` icon + label, no fill. Icons are Lucide-style, stroke-width **2.75**, `stroke-linecap: round`, and the exact path data is already vendored in the prototype's `ICONS` constant (`design/Harzer Wandernadel.dc.html`) — copy those paths rather than re-drawing icons from scratch. Rendering them needs `react-native-svg`, not yet installed — see Open Questions.
 
 **Segmented control** (Karte/Stempel toggle) — pill track (`surface`, `rounded-full`), active segment `bg-bg` (or `surface`) fill, inactive transparent.
 
@@ -219,7 +219,7 @@ These come directly from the mockups (`docs/design/screenshots/`) and `docs/desi
 | Wanderkönig | `accent-2-600` | `accent-2-200` |
 | Wanderkaiser | `accent-2-800` | `accent-2-300` |
 
-Status label is `"{reqLeft} offen"` while in progress; once earned, always **"Ziel erreicht am {date}"** — `docs/design/DESIGN.md`'s copy rule, confirmed as the actual value in the prototype's data (`status: 'ziel erreicht'`) and its detail-sheet UI. There is no "verliehen" anywhere in the underlying data — treat any UI text that still says "verliehen" as stale and correct it to "Ziel erreicht am …".
+Status label is `"{reqLeft} offen"` while in progress; once earned, always **"Ziel erreicht am {date}"** — confirmed as the actual value in the prototype's data (`status: 'ziel erreicht'`) and its detail-sheet UI. There is no "verliehen" anywhere in the underlying data — treat any UI text that still says "verliehen" as stale and correct it to "Ziel erreicht am …".
 
 **Description panels** (e.g. collection detail body text) always get their own `surface` + `rounded-md` + `p-[18px]` container — never bare paragraph text directly on the sheet background. Minimum 15px font.
 
@@ -236,6 +236,24 @@ Status label is `"{reqLeft} offen"` while in progress; once earned, always **"Zi
 **Status/filter chip**: see Layout Patterns above.
 
 **Badge/collection tile**: see Layout Patterns above — icon circle stays on `surface`, ring color signals bronze/silver/gold, not a full-tile fill, so earned vs. in-progress scan easily in a list.
+
+---
+
+## Language & Tone (Copy)
+
+The app's UI copy is German — hiking-warm and direct, not corporate:
+
+- German, direct, wanderfreundlich-warm. Avoid anglicisms where a German word fits.
+- Decimal numbers use a comma, not a period: `2,4 km`, not `2.4 km`.
+- Status labels are short and active: "Noch 4 Stempel", "Ziel erreicht am …", "X von Y" — not passive/bureaucratic phrasing.
+- Domain terms: a station is `visited` (gestempelt) or `isOpen` (offen) — never "erledigt/fehlt". A collection's earned state reads "Ziel erreicht am {date}" — see Layout Patterns above for the resolved "verliehen" vs. "ziel erreicht" question.
+
+## No-Gos
+
+- No sharp corners, no desaturating the palette toward gray — warmth is the point (see North Star).
+- No second display typeface next to Caprasimo — it's the only heading/display voice in the system.
+- No browser/OS-default focus rings — every focusable element gets an `accent`-colored outline instead.
+- No hardcoded colors or radii in component code — always the tokens above, never a raw hex or px value that a token already covers.
 
 ---
 
