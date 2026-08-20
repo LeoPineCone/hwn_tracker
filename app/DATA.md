@@ -191,4 +191,66 @@ Per-tier metal and ring colours (`metal` and `ring` fields in `NEEDLES`, e.g. Br
 
 ---
 
-Entity Relationships, a Worked Example, and Open Questions follow in later work.
+## Entity Relationships
+
+This model has exactly **two entities**: Station and Collection. Everything else this document describes — badge tiers, themed trails, "3 of 5 collections earned," a hiker's progress bar — is a shape built out of those two, not a third or fourth entity. There are three relationships between them, and the third one is not really a relationship at all, in the sense of something stored.
+
+1. **Station ↔ Collection, many-to-many, keyed by station `number`.** A station belongs to zero or more collections and a collection has zero or more member stations. This is the Membership relationship described in the Collection section above; see "Membership" for the proof (station 22 / Brocken belongs to both Harzer Hexenstieg and Brocken-Runde simultaneously) and for why it is modelled as a relationship in its own right rather than a field on either side.
+2. **Collection → Collection, an any-N rule's source pool.** A collection whose completion rule is any-N does not point at stations directly for its target — it points at another collection, and the rule is judged against that collection's members. This is a relationship between two Collection records. In today's data it is acyclic (nothing points back at something that, transitively, points at it), and every single any-N rule in the prototype's data — Bronze, Silber, Gold, and Wanderkönig — points at the same root: Harzer Wanderkaiser, the all-stations collection (see "Alle Stempel and the all-stations collection" and "Today's five tiers" above). Nothing in the model requires a single root or forbids a deeper chain — "The mechanism generalizes" above already covers that a themed collection could just as well be a source pool — but as observed today, it is one root with four direct any-N children.
+3. **Hiker ↔ progress: not stored.** A hiker's progress toward a collection is not an edge in this model at all. It is derived at read time by intersecting the set of stations the hiker has visited with the rule's pool (the collection's own members for an all-members rule, the source collection's members for an any-N rule) and counting — exactly what "Derived, not stored" under Completion Rules and Badges describes for progress, target, earned state, remaining count, and percentage alike. There is no `(hiker, collection)` record anywhere in this model; asking "has this hiker earned Gold?" is a computation over `visited` flags, not a lookup.
+
+    Station ──── membership (M:N, keyed by station `number`) ──── Collection
+                                                                        │
+                                                                        │ any-N rule's source pool
+                                                                        │ (collection → collection, acyclic)
+                                                                        ▼
+                                                                  Collection
+                                                         (today: always Harzer Wanderkaiser,
+                                                          the all-stations collection)
+
+    hiker progress toward any Collection = count(visited Stations ∩ rule's pool)
+    — computed at read time; not a stored edge, not a third entity
+
+**On the originating framing.** GitHub issue #1 that started this work framed the domain as three entities — Station, Collection, and **Badge** — with a collection's progress *feeding into* a badge or tier, as though a badge were a separate record downstream of a collection. That framing did not survive contact with the domain: badges are not fed by themed collections, and there is no separate Badge entity or Badge-feeds-from-Collection relationship anywhere in the model this document arrived at. A badge/tier *is* a Collection, distinguished from a themed trail only by its completion rule (any-N over the all-stations collection instead of all-members over its own list) — see "A naming note first" at the top of the Collection section and "Today's five tiers" under Completion Rules and Badges. This is written down explicitly here so a future reader does not re-derive it from scratch, and so issue #1's original three-entity wording is not mistaken for the authoritative model — the two-entity model in this document supersedes it.
+
+---
+
+## Worked Example
+
+This walks one hiker through the whole model, using the prototype's own demo numbers, so the model can be checked directly against the mockup rather than taken on faith. Every figure below is visible in `app/design/screenshots/screen_rewards_v1.png` (the Erfolge screen) and was independently verified against the prototype source, `app/design/Harzer Wandernadel.dc.html`, before being written down here.
+
+The hiker has stamped **46 of 222** stations.
+
+- **App header.** The header badge on every screen (not just Erfolge) reads "46/222" — a literal string in the markup (line 49), and visible top-right in the screenshot.
+- **Gesamtfortschritt card.** The second Erfolge carousel card shows "46" over "von 222 Stempelstellen" (lines 255–256), matching the header.
+- **Bronze, Silber, and Gold read as earned, with dates.** Their targets are 8, 16, and 24 respectively (the same values already recorded in "Today's five tiers" above, re-verified here directly against `NEEDLES[0]`, `NEEDLES[1]`, `NEEDLES[2]` — lines 716, 718, 720). Since progress toward any of them is the count of visited stations within their shared pool, Harzer Wanderkaiser, and 46 ≥ 8, 46 ≥ 16, and 46 ≥ 24, all three are earned: the prototype records `done:1` with dates `'02.05.2025'`, `'19.06.2025'`, and `'30.07.2025'` for Bronze, Silber, and Gold respectively (same lines), and the screenshot shows all three rows as "ziel erreicht".
+- **Wanderkönig sits at 46/50.** `NEEDLES[3]` records `req:50, have:46, done:0` (line 722), matching the ring card's "46" over "von 50" (lines 238–239) and the screenshot. Its status text reads "Noch **4 Stempel** bis zur Nadel in Silber-Gold" (line 243) — the derived detail-sheet wording established in "Derived, not stored" above, not the grid view's separate `status:'4 offen'` field also present at line 722 (that field is real, but it is the other, non-derived label the Completion Rules section already distinguishes — the grid view in the screenshot's lower list does show "4 offen" next to Wanderkönig, and both wordings describe the same fact via two different fields).
+
+  Its percentage, per the Completion Rules formula `Math.round(Math.min(N.have, N.req) / N.req * 100) + '%'` (cited there at line 952): `Math.min(46, 50) = 46`, `46 / 50 = 0.92`, `0.92 * 100 = 92`, rounded is `92`. So Wanderkönig shows **92%**. This is independently confirmed by the ring itself — the card's `conic-gradient` is hardcoded to fill to exactly `92%` before the track colour takes over (line 236), agreeing with the computed value without needing to trust either number alone. (The card also carries a second, unrelated percentage, "21%," labelled "gesammelt" — that is `Math.round(46 / 222 * 100)`, the hiker's overall share of all 222 stations, not a completion-rule percentage for any one collection. It is worth naming so a reader comparing the screenshot against this document does not conflate the two 90-odd-vs-20-odd percentages on the same card.)
+- **Wanderkaiser sits at 46/222.** `NEEDLES[4]` records `req:222, have:46, done:0` (line 724). Remaining is `222 - 46 = 176`, matching `Math.max(0, 222 - 46) = 176`. Following the same corrected wording as Wanderkönig above, the derived status label is **"Noch 176 Stempel"** — not the grid view's separate `status:'176 offen'` field (also at line 724, and also visible in the screenshot's bottom row), for the same reason: that field is the other, non-derived label, not the one this document's derived model produces.
+- **Kollektionen counter reads "3 von 5."** Three tiers earned (Bronze, Silber, Gold) out of five tiers total (Bronze, Silber, Gold, Wanderkönig, Wanderkaiser) — literally "3 von 5" in the markup (line 294) and in the screenshot's "Kollektionen" row header. Per "Counts are derived, not stored" above, this "3" and "5" are themselves both counts taken over loaded data (tiers with `done` true, and tiers total), not stored anywhere as their own fields.
+
+**A note on the prototype's own inconsistency, worth calling out because it is exactly what this document's model is designed to prevent:** `NEEDLES` hardcodes each tier's `have` independently — `8` for Bronze, `16` for Silber, `24` for Gold, `46` for Wanderkönig and Wanderkaiser (lines 716, 718, 720, 722, 724). Under this document's derived model, all five of those tiers draw progress from the *same* pool — Harzer Wanderkaiser, whose membership is exactly the same 46 visited stations regardless of which tier is asking. A correct derivation would read `have = 46` for every one of the five tiers, capped only where the percentage or earned-state calculation caps it — not a different, tier-specific `have` for Bronze/Silber/Gold that happens to land exactly on their own target. The prototype's mock data getting this "right" for Bronze/Silber/Gold (by luck of hand-authored numbers landing on the target) is not evidence the approach is sound; it is precisely the kind of hand-maintained-per-record total that "Counts are derived, not stored" above says to stop doing.
+
+---
+
+## Open Questions — Not Yet Decided
+
+**Settled, do not relitigate:**
+
+- There are two entities, Station and Collection; badges are collections with completion rules, not a third entity (see "Entity Relationships" above).
+- Station-to-collection membership is many-to-many.
+- Station identity is the official station `number`.
+- No cardinality is fixed anywhere in the model; every count — station totals, collection sizes, tier counts, the "3 von 5" Kollektionen counter — is derived by counting loaded data, never stored as its own number.
+- There are **no region rules.** The region sentences in the Silber and Wanderkönig tier descriptions are flavour text, confirmed settled by the domain owner — see "The region sentences are flavour text" under Completion Rules and Badges.
+
+**Known and deliberately deferred:**
+
+- **Retired and special stations.** These demonstrably exist in the real programme: `ARCHITECTURE.md` states the programme has "currently ~222 official stations, plus special stations and retired/inactive ones" (`ARCHITECTURE.md:9`, verified by grep). Handling them is planned later work, not an unanswered question sitting idle — see "Retired and special stations" under the Station section above for the full deferral note. The consequence stated there bears repeating because it is easy to underestimate: because every total in this model is counted from loaded data rather than stored, the choice between removing a retired station from a collection outright versus keeping it with a retired flag changes every derived total that station feeds into — and therefore can change whether a hiker who already earned a badge keeps it once a station the badge's rule counted retires.
+
+**Genuinely open:**
+
+- Where real station coordinates (`latitude`/`longitude`) come from — see the Station section's field table; this is called out there as the single most important missing row in this document.
+- Whether themed collections will ever have completion rules other than all-members — today every themed collection (Harzer Hexenstieg, Brocken-Runde, Selketal-Tour, Welterbe & Bergbau) is all-members and only the five tiers use any-N, but "The mechanism generalizes" above notes nothing in the model prevents a themed collection from carrying an any-N rule too.
+- Whether the real programme has more than the four themed collections seen in the prototype's `COLLECTIONS` array (`app/design/Harzer Wandernadel.dc.html:695`–701), and, if so, where their definitions would come from.
+- The on-device storage mechanism and the authoring/versioning pipeline for this dataset. This is explicitly **not** answered here — it is deferred to `ARCHITECTURE.md`'s "Open Questions / Not Yet Decided" list, which already names both "On-device data storage" and "How official station/collection/badge data is authored, versioned, and shipped" as open. This document describes shapes, not where those shapes live on disk.

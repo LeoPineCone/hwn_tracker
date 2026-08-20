@@ -38,8 +38,10 @@ be loaded. Those exclusions are deliberate; see Decision Log.
 - [x] Milestone 2: Collection section (membership, many-to-many) added to `app/DATA.md`.
       (2026-08-20)
 - [x] Milestone 3: Completion rules and badge tiers as a kind of collection. (2026-08-20)
-- [ ] Milestone 4: Relationships, worked example, Open Questions, and cross-links from
-      `ARCHITECTURE.md`, `AGENTS.md`, `docs/app.md`, and `app/DESIGN.md`.
+- [x] Milestone 4, step 1 of 2: Entity Relationships, Worked Example, and Open Questions sections
+      added to `app/DATA.md`, closing out the document's content. (2026-08-20)
+- [ ] Milestone 4, step 2 of 2: cross-links added from `ARCHITECTURE.md`, `AGENTS.md`,
+      `docs/app.md`, and `app/DESIGN.md`.
 - [ ] ExecPlan finalized: Outcomes & Retrospective written, plan moved from
       `docs/exec-plans/active/` to `docs/exec-plans/completed/`.
 
@@ -289,6 +291,17 @@ each one changes what `app/DATA.md` must say, so the executor must preserve them
   Consequence: this plan's own Milestone 3 section (not `app/DATA.md`) contains a latent error in
   its prose that the executor is flagging here rather than silently editing, since the plan
   section itself is not being rewritten as part of execution.
+
+- Observation: The Worked Example delegation, while independently verifying the prototype's
+  `NEEDLES` array against the source, found an additional, previously unrecorded inconsistency:
+  `NEEDLES` hardcodes each tier's `have` value independently (8 for Bronze, 16 for Silber, 24 for
+  Gold, 46 for Wanderkönig and Wanderkaiser — lines 716, 718, 720, 722, 724), even though under
+  this document's derived model all five tiers draw progress from the same pool (Harzer
+  Wanderkaiser's 46 visited stations) and should therefore all read `have = 46`. Bronze/Silber/
+  Gold's mock values happen to land exactly on their own `req`, which looks correct by
+  coincidence, not because the prototype derives them. `app/DATA.md`'s Worked Example section
+  records this as a concrete illustration of why "Counts are derived, not stored" matters.
+  Independently re-verified by the executor via `grep -n` against lines 716–725.
 
 - Decision: The Code-Quality Gate is skipped for every milestone's Commit Gate in this plan.
   Rationale: this entire ExecPlan is documentation-only, as stated in its own Purpose section —
