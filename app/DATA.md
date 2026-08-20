@@ -72,4 +72,53 @@ The third row (`vis=0`) shows an open/unvisited station; note `x`/`y` are fake-m
 
 ---
 
-The Collection and Completion Rules / badge-tier sections follow in later work.
+## Collection
+
+**A naming note first, because it matters for everything below.** The prototype's UI uses the German word "Kollektion" for two lists that look different at first glance: themed trails offered as a filter on the Karte filter sheet (screenshot `screen_map_filter_v1.png`, headed "COLLECTION · NUR EINE" — "collection, choose only one"), and badge tiers shown on the Erfolge screen (screenshot `screen_rewards_v1.png`, headed "Kollektionen · 3 von 5" — "collections, 3 of 5"). This document treats these as **one entity** — Collection — rather than two. The only thing that actually distinguishes a themed collection (e.g. "Harzer Hexenstieg") from a badge tier (e.g. "Gold") is *how completion is judged*: fixed membership vs. an any-N-of-pool rule. That distinction is covered in the Completion Rules section that follows in later work; this section only covers what a Collection *is* and which stations belong to it.
+
+A **Collection** (Kollektion) is a named group of stations. It is the shape behind both the Karte screen's themed-trail filters and the Erfolge screen's badge tiers.
+
+| Field | Type | Confidence | Notes |
+|---|---|---|---|
+| `id` | text/identifier | **Assumed** | The prototype has no id — it looks a collection up by its display name (`COLLECTIONS.find(c => c[0] === collection)`, line 774). Looking up by name breaks if a name is ever corrected or translated. This row is this document's own recommendation — a proposal, not a prototype fact. |
+| `name` | text | **Confirmed** | The display name, e.g. `'Harzer Hexenstieg'`, `'Brocken-Runde'` (line 697–698), or a badge tier's `tier` value, e.g. `'Bronze'`, `'Wanderkaiser'` (lines 716, 724). |
+| `description` (themed collections) | text | **Assumed** | The prototype's `COLLECTIONS` array (lines 695–701) carries only a name and a member list — no description field for the themed trails. Since this document treats themed collections and badge tiers as the same entity, the field is defined on every collection and is simply empty today for the themed ones. |
+| `description` (badge tiers) | text | **Confirmed** | Badge tiers carry a German `desc` field in the `NEEDLES` array, e.g. Bronze's "Die erste Stufe: acht beliebige Stempelstellen im Harz…" (line 717) and Wanderkaiser's "Alle 222 Stempelstellen der Harzer Wandernadel…" (line 725). Verified across the full `NEEDLES` array, lines 715–726. |
+| Member stations | relationship | **Confirmed** | The prototype confirms membership exists and is a list of station numbers (line 697 onward), but it is documented here as a *relationship between Station and Collection*, not a plain field owned by either side — see Membership below. |
+
+### Membership
+
+Membership is many-to-many: a station belongs to **zero or more** collections, and a collection contains **zero or more** stations.
+
+Proof from the prototype's own demo data: station 22 (Brocken) appears in the member list of both `'Harzer Hexenstieg'` (`[22,25,27,30,33,59,62,89,92,101]`, line 697) and `'Brocken-Runde'` (`[22,25,33,35,92,95,98]`, line 698) — verified by reading both arrays directly. One station, two collections, simultaneously.
+
+This plainly contradicts the casual singular phrasing "a station can belong to a **collection**" in `ARCHITECTURE.md` (line 9) and in the originating GitHub issue #1. That phrasing should not be read as authoritative about cardinality — it describes the common case, not the rule.
+
+**Storage-shape consequence.** The prototype stores membership as an array hanging off the collection — `['Harzer Hexenstieg', [22,25,27,30,33,59,62,89,92,101]]` (line 697) is literally `[name, stationNumbers]`. That shape answers "which stations are in this collection?" cheaply (read the array), but answers "which collections is this station in?" only by scanning every collection's member list looking for a match. The station detail sheet will need that second direction (to show, on a station's own page, which collections it belongs to), so a single embedded list is not sufficient as the only representation.
+
+Because of this, this document describes membership as a **relationship in its own right** — conceptually a set of `(station, collection)` pairs — rather than as a field owned by the station or the collection. Whether it is physically stored as an embedded list, a join table, or some combination of both is a storage-layer decision explicitly deferred to `ARCHITECTURE.md`'s open questions about on-device storage (`ARCHITECTURE.md` line 139); this document does not decide it. What this document does fix is the identity side: membership references a station by its `number` field, the identity field established in the Station section above.
+
+### Counts are derived, not stored
+
+No collection ever stores its own size. A collection's station count is derived by counting its members at read time; the programme's total station count is derived by counting the loaded stations, not stored anywhere as a constant.
+
+The prototype does the opposite, and it is exactly what not to do: the literal `222` is hardcoded independently in at least two places — the all-stations collection's displayed count, `count: list ? list.length : 222` (line 817), and the station grid's label, `gridLabel: f.length + ' von 222 · sortiert nach Nummer'` (line 868). These two hardcoded literals aren't even guaranteed to agree with each other, let alone with the real number of loaded stations. The model must support an arbitrary number of stations and an arbitrary number of collections; nothing in the model may assume any fixed total.
+
+### "Alle Stempel" and the all-stations collection
+
+This is the trap in this entity, so it earns its own explanation. In the prototype, `COLLECTIONS[0]` is `[ALL_COLL, null]` (line 696, with `ALL_COLL = 'Alle Stempel'` defined at line 694) — a pseudo-collection whose member list is `null` rather than an array of station numbers. Its displayed count falls back to the hardcoded literal `222` (`count: list ? list.length : 222`, line 817), and the filtering logic treats a `null` member list as "apply no membership filter at all": `(!set || set.indexOf(s.nr) > -1)` (line 776), where `set` is looked up from `COLLECTIONS` by name (line 774) and is `null` for `'Alle Stempel'`.
+
+This conflates two genuinely different things:
+
+1. There is a real collection containing every official station. The domain owner names it **Harzer Wanderkaiser**. It is an ordinary collection with real membership — a later Completion Rules section shows it is the pool the lower badge tiers (Bronze, Silber, Gold, Wanderkönig) draw their any-N rules from.
+2. Separately, there is the filter sheet's "show everything" affordance — meaning *no collection filter is currently selected*. That is UI state, not a collection at all.
+
+The prototype's `[ALL_COLL, null]` entry hybridizes these two into one row of one array, using `null` as a sentinel for "no filter." This document recommends modelling them separately: the first as an ordinary collection with real membership like any other, and the second purely as the absence of a filter selection in UI state (e.g. an unset/null selected-collection field on the Karte screen, not a collection record at all). The prototype's approach is explicitly not recommended, because a `null` member list forces every future consumer of the collection list into a special case for entry zero — a hazard a plain, complete collection record avoids entirely.
+
+### Filtering is single-select today; the model is not
+
+The Karte filter sheet currently allows selecting at most one collection at a time (`screen_map_filter_v1.png`, headed "COLLECTION · NUR EINE"). This is a constraint on the *filtering UI*, not on the data: the underlying model permits a station to belong to any number of collections simultaneously (see Membership above), so a future multi-select filter would require no change to this model — only to the filter UI and its query logic.
+
+---
+
+Completion Rules — including how a badge tier's collection is distinguished from a themed collection's — follow in later work.

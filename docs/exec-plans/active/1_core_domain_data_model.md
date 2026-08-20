@@ -35,7 +35,8 @@ be loaded. Those exclusions are deliberate; see Decision Log.
 
 - [x] Milestone 1: `app/DATA.md` created with front matter, conventions, and the Station section.
       (2026-08-20)
-- [ ] Milestone 2: Collection section (membership, many-to-many) added to `app/DATA.md`.
+- [x] Milestone 2: Collection section (membership, many-to-many) added to `app/DATA.md`.
+      (2026-08-20)
 - [ ] Milestone 3: Completion rules and badge tiers as a kind of collection.
 - [ ] Milestone 4: Relationships, worked example, Open Questions, and cross-links from
       `ARCHITECTURE.md`, `AGENTS.md`, `docs/app.md`, and `app/DESIGN.md`.
@@ -264,6 +265,25 @@ each one changes what `app/DATA.md` must say, so the executor must preserve them
   rule being specified — and even there, the document must say they are today's values of an
   open-ended list, not a closed enumeration baked into the model.
   Date/Author: 2026-08-20, planner.
+
+- Observation: Milestone 2's `## Collection` section (delegated, then independently re-verified by
+  the executor against `app/design/Harzer Wandernadel.dc.html`) had zero citation errors — every
+  line number cited (694, 696–701, 715–726, 774, 776, 817, 868, and `ARCHITECTURE.md` lines 9 and
+  139) checked out exactly on independent `sed -n` re-verification. Noted here because Milestone 1
+  needed one correction and Milestone 2 did not, suggesting the "verify every citation yourself"
+  instruction in the delegation prompt is working as intended.
+
+- Decision: The Code-Quality Gate is skipped for every milestone's Commit Gate in this plan.
+  Rationale: this entire ExecPlan is documentation-only, as stated in its own Purpose section —
+  "No station list, no collection list, no TypeScript, no runtime code, and no storage
+  mechanism is produced here." Every milestone touches only `app/DATA.md` (a new Markdown spec)
+  plus, in Milestone 4, one-line cross-link edits to other Markdown files. No production code
+  (TypeScript, tests, config with executable behaviour) is modified by any milestone. Standard
+  verification instead is: the plan's own grep-based acceptance commands (confidence-marker
+  count, absence of `interface`/`type` keywords, cross-link presence) plus the executor's own
+  line-citation spot-checks against the prototype source, run at each Commit Gate in place of
+  lint/type-check/code-quality review.
+  Date/Author: 2026-08-20, executor.
 
 - Decision: A one-line, already-verified citation typo (station 9's prototype line number in the
   Milestone 1 evidence block) was corrected by the executor directly with a single-line edit,
