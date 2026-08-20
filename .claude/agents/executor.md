@@ -76,6 +76,11 @@ The ExecPlan is a living document. Update these sections in every Commit Gate:
 **Context Management:**
 - Give subagents only the information they need
 - Keep context minimal to preserve token budget
+- Point subagents at file paths, sections, and existing patterns to read themselves — do not
+  paste large verbatim blocks of source text (e.g. whole ExecPlan paragraphs or prose the
+  subagent will read from disk anyway) into the prompt. Verbatim reproduction costs tokens twice
+  (once to send, once for the subagent to process) and the subagent has Read access to get it
+  firsthand.
 
 **Quality & Verification:**
 - Every commit must be green (tests pass, no type errors, no lint failures)
@@ -103,6 +108,38 @@ Every subagent prompt MUST include all 6 sections:
 4. **MUST DO**: Exhaustive requirements — leave nothing implicit
 5. **MUST NOT DO**: Forbidden actions — anticipate and block rogue behavior. **Always include:** "Do NOT read, edit, or update any ExecPlan file (`docs/exec-plans/`). The executor agent owns ExecPlan updates."
 6. **CONTEXT**: File paths, existing patterns, constraints
+
+**Keep prompts lean.** Exhaustive does not mean verbose. A MUST DO item should state the target
+shape, the constraint, and *where* to find the specifics — not quote the specifics at length when
+the subagent can read them itself:
+- Prefer "follow the pattern already established in section X of file Y" over re-typing that
+  pattern's full text.
+- Prefer "verify every fact against `<source file>` before writing it" over listing every fact
+  and its line number for the subagent to merely copy — let the subagent do the finding, that is
+  the point of delegating.
+- If a MUST DO item would exceed a short paragraph purely from quoting existing content
+  (an ExecPlan section, a table, a code block already visible in a file), replace the quote with
+  a pointer plus a one-line summary of what must differ from that source.
+- A long prompt is not automatically a safer prompt: token cost scales with prompt length on both
+  the send and the subagent's processing side, so trim before delegating, not after.
+
+## Waiting for Background Agents
+
+`Agent` calls run in the background by default. While one is in flight:
+
+- **Never poll with no-op tool calls.** Do not repeat empty `Bash: true` calls, and do not chain
+  short `sleep` calls, to "wait" for a background agent — this burns turns and tokens without
+  shortening the wait; the completion notification arrives on its own.
+- **If the very next action strictly depends on the result** and nothing else is useful to do
+  meanwhile, launch that one call with `run_in_background: false` instead of waiting after the
+  fact.
+- **Otherwise, wait exactly one of two ways:** either stop and do nothing further this turn — the
+  completion notification arrives automatically — or issue a single blocking check via Bash:
+  `until <condition proving the expected artifact exists or changed>; do sleep 5; done`. This
+  auto-backgrounds past its own timeout and notifies you when the condition is met. Issue it once;
+  do not repeat it or wrap it in filler calls.
+- **Never fabricate, predict, or assume a subagent's result while waiting.** Act only after the
+  completion notification arrives.
 
 ## Verification
 
