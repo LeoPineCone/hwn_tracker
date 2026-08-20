@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#e6dcc7">
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="800" fill="#e6dcc7"/>
+<circle cx="600" cy="280" r="140" fill="#3d472b" opacity="0.8"/>
+<path d="M 600 320 L 630 380 L 660 340 Z" fill="#f7f2e6"/>
+<path d="M 520 480 L 600 420 L 680 480" stroke="#8fa073" stroke-width="8" fill="none" stroke-linecap="round"/>
+<g opacity="0.4">
+<rect x="340" y="520" width="140" height="120" rx="12" fill="#2e2a26"/>
+<rect x="540" y="520" width="140" height="120" rx="12" fill="#2e2a26"/>
+<rect x="740" y="520" width="140" height="120" rx="12" fill="#2e2a26"/>
+</g>
+<text x="600" y="720" font-family="system-ui" font-size="48" font-weight="bold" fill="#3d472b" text-anchor="middle">Harzer Wandernadel</text>
+</svg>
+</template>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-77d96d4e-dd8c-48b3-b708-b44d2d04c2b9/styles.css">
+<script src="_ds/organic-77d96d4e-dd8c-48b3-b708-b44d2d04c2b9/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#e6dcc7;font-family:var(--font-body)}
+.hs::-webkit-scrollbar,.vs::-webkit-scrollbar{display:none}
+.hs,.vs{scrollbar-width:none}
+@keyframes popIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:36px 0;background:radial-gradient(120% 90% at 50% 0%,#efe4cf,#ddd2ba)">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+
+<div style="position:relative;height:874px;background:var(--color-bg);color:var(--color-text);display:flex;flex-direction:column;overflow:hidden;transition:background .25s,color .25s;{{ themeVars }}">
+
+<!-- ══ header ══ -->
+<div style="padding:60px 20px 12px;background:var(--color-bg);position:relative;z-index:5">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+<div>
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Harzer Wandernadel</div>
+<h3 style="margin:6px 0 0;font-size:26px;color:var(--color-accent-2-900)">{{ screenTitle }}</h3>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;padding:7px 12px 7px 9px;border-radius:999px;background:{{ ink }};color:#f7f2e6;font:600 13px var(--font-body);white-space:nowrap">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M5 21v-6l7-4 7 4v6"></path><path d="M12 3 4 9h16Z"></path></svg>
+46/222
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ scroll body ══ -->
+<div class="vs" style="flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch">
+
+<!-- ─── KARTE ─── -->
+<sc-if value="{{ isKarte }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="position:sticky;top:0;z-index:6;background:var(--color-bg);padding-bottom:14px">
+<div style="display:flex;gap:8px;padding:4px 20px 12px;align-items:center">
+<div style="display:flex;gap:6px;flex:1">
+<div onClick="{{ setFilterAll }}" style="padding:7px 14px;border-radius:999px;font:600 13px var(--font-body);cursor:pointer;background:{{ fAllBg }};color:{{ fAllFg }};border:1px solid var(--color-divider)">Alle</div>
+<div onClick="{{ setFilterVisited }}" style="padding:7px 14px;border-radius:999px;font:600 13px var(--font-body);cursor:pointer;background:{{ fVisBg }};color:{{ fVisFg }};border:1px solid var(--color-divider)">Besucht</div>
+<div onClick="{{ setFilterOpen }}" style="padding:7px 14px;border-radius:999px;font:600 13px var(--font-body);cursor:pointer;background:{{ fOpenBg }};color:{{ fOpenFg }};border:1px solid var(--color-divider)">Offen</div>
+</div>
+<div onClick="{{ openFilter }}" style="position:relative;width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:999px;background:{{ filterBtnBg }};color:{{ filterBtnFg }};border:1px solid var(--color-divider);cursor:pointer">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>
+<sc-if value="{{ filterActive }}">
+<span style="position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:999px;background:var(--color-accent);border:2px solid var(--color-bg)"></span>
+</sc-if>
+</div>
+</div>
+<!-- segmented: Karte ↔ Stempel -->
+<div style="padding:0 20px">
+<div style="display:flex;padding:4px;border-radius:999px;background:var(--color-surface)">
+<div onClick="{{ showMap }}" style="flex:1;text-align:center;padding:10px 0;border-radius:999px;font:600 13.5px var(--font-body);cursor:pointer;background:{{ segMapBg }};color:{{ segMapFg }};box-shadow:{{ segMapShadow }}">Karte</div>
+<div onClick="{{ showStamps }}" style="flex:1;text-align:center;padding:10px 0;border-radius:999px;font:600 13.5px var(--font-body);cursor:pointer;background:{{ segStampBg }};color:{{ segStampFg }};box-shadow:{{ segStampShadow }}">Stempel</div>
+</div>
+</div>
+<sc-if value="{{ collectionShown }}">
+<div style="display:flex;align-items:center;gap:8px;padding:0 20px 12px">
+<span style="display:flex;align-items:center;gap:7px;padding:6px 8px 6px 12px;border-radius:999px;background:var(--color-accent-200);color:var(--color-accent-800);font:600 12px var(--font-body)">
+{{ collection }}
+<span onClick="{{ clearCollection }}" style="display:flex;cursor:pointer">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+</span>
+</span>
+</div>
+</sc-if>
+</div>
+
+<!-- map -->
+<sc-if value="{{ isMapView }}" hint-placeholder-val="{{ true }}">
+<div style="padding:0 20px 24px">
+<div style="position:relative;height:430px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);background:linear-gradient(160deg,#e7e3cd,#d9dcc0 55%,#cdd4b4)">
+<svg viewBox="0 0 360 430" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;opacity:.55">
+<g fill="none" stroke="#8fa073" stroke-width="1.2">
+<path d="M-20 300 C60 250 120 300 180 250 S300 210 380 250"></path>
+<path d="M-20 260 C70 205 130 260 190 205 S310 165 380 205"></path>
+<path d="M-20 220 C80 160 140 215 200 160 S320 120 380 160"></path>
+<path d="M-20 350 C50 305 130 350 190 300 S300 265 380 300"></path>
+<path d="M-20 395 C50 360 140 400 200 355 S310 320 380 350"></path>
+</g>
+<g fill="#7a8a5e" opacity=".28">
+<ellipse cx="70" cy="120" rx="90" ry="60"></ellipse>
+<ellipse cx="290" cy="90" rx="70" ry="48"></ellipse>
+<ellipse cx="250" cy="330" rx="95" ry="55"></ellipse>
+</g>
+<g stroke="#c67139" stroke-width="2" stroke-dasharray="6 6" fill="none" opacity=".8">
+<path d="M40 380 C110 330 130 250 200 200 S290 150 330 70"></path>
+<path d="M20 180 C90 200 150 150 230 175 S310 240 350 230"></path>
+</g>
+<g stroke="#5d7ea0" stroke-width="3" fill="none" opacity=".5">
+<path d="M120 430 C140 370 100 330 130 280"></path>
+</g>
+</svg>
+<div style="position:absolute;left:16px;top:14px;padding:6px 11px;border-radius:999px;background:rgba(245,234,216,.9);font:600 11px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--color-accent-2-800)">Nationalpark Harz</div>
+
+<sc-for list="{{ pins }}" as="p" hint-placeholder-count="8">
+<div onClick="{{ p.open }}" style="position:absolute;left:{{ p.x }}%;top:{{ p.y }}%;transform:translate(-50%,-100%);cursor:pointer;display:flex;flex-direction:column;align-items:center">
+<sc-if value="{{ p.visited }}" hint-placeholder-val="{{ true }}">
+<div style="width:30px;height:30px;border-radius:999px 999px 999px 4px;transform:rotate(-45deg);background:{{ ink }};border:2.5px solid #f7f2e6;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center">
+<span style="transform:rotate(45deg);color:#f7f2e6;font:700 11px var(--font-body)">{{ p.nr }}</span>
+</div>
+</sc-if>
+<sc-if value="{{ p.isOpen }}">
+<div style="width:26px;height:26px;border-radius:999px 999px 999px 4px;transform:rotate(-45deg);background:#f7f2e6;border:2.5px dashed var(--color-accent-600);display:flex;align-items:center;justify-content:center">
+<span style="transform:rotate(45deg);color:var(--color-accent-700);font:700 10px var(--font-body)">{{ p.nr }}</span>
+</div>
+</sc-if>
+</div>
+</sc-for>
+
+<sc-if value="{{ parking }}">
+<sc-for list="{{ lots }}" as="l" hint-placeholder-count="4">
+<div onClick="{{ l.open }}" style="position:absolute;left:{{ l.x }}%;top:{{ l.y }}%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:6px;background:#5d7ea0;border:2px solid #f7f2e6;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;color:#f7f2e6;font:700 12px var(--font-body);cursor:pointer">P</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ showShelters }}">
+<sc-for list="{{ hutMarkers }}" as="m" hint-placeholder-count="4">
+<div onClick="{{ m.open }}" style="position:absolute;left:{{ m.x }}%;top:{{ m.y }}%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:6px;background:var(--color-accent-700);border:2px solid #f7f2e6;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;color:#f7f2e6;cursor:pointer">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M4 20 12 5l8 15Z"></path></svg>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ hasPoi }}">
+<div style="position:absolute;left:12px;right:12px;bottom:12px;padding:14px 15px;border-radius:var(--radius-md);background:var(--color-bg);box-shadow:var(--shadow-lg);animation:popIn .2s ease-out">
+<div style="display:flex;align-items:flex-start;gap:12px">
+<div style="width:34px;height:34px;flex:none;border-radius:9px;background:{{ poiColor }};color:#f7f2e6;display:flex;align-items:center;justify-content:center">
+<sc-if value="{{ poiIsLot }}"><span style="font:700 15px var(--font-body)">P</span></sc-if>
+<sc-if value="{{ poiIsHut }}">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M4 20 12 5l8 15Z"></path></svg>
+</sc-if>
+</div>
+<div style="flex:1">
+<div style="font:600 10.5px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600)">{{ poiKind }}</div>
+<div style="font:400 17px var(--font-heading);color:var(--color-accent-2-900);padding-top:2px">{{ poiName }}</div>
+<div style="font:400 11.5px var(--font-body);color:var(--color-neutral-700)">{{ poiSub }}</div>
+</div>
+<div onClick="{{ closePoi }}" style="width:26px;height:26px;flex:none;border-radius:999px;background:var(--color-neutral-200);color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:12px">
+<sc-for list="{{ poiTags }}" as="t" hint-placeholder-count="3">
+<span style="padding:5px 10px;border-radius:999px;background:var(--color-surface);font:600 11.5px var(--font-body);color:var(--color-accent-2-800)">{{ t.t }}</span>
+</sc-for>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding-top:13px">
+<span style="flex:1;font:600 12.5px var(--font-body);color:var(--color-neutral-700)">{{ poiDist }} entfernt</span>
+<div style="padding:9px 16px;border-radius:999px;background:var(--color-accent);color:var(--color-bg);font:400 14px var(--font-heading);cursor:pointer">Route</div>
+</div>
+</div>
+</sc-if>
+<div style="position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:8px">
+<div style="width:40px;height:40px;border-radius:999px;background:var(--color-bg);box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;color:var(--color-accent-700)">
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg>
+</div>
+</div>
+</div>
+<div style="display:flex;gap:16px;padding:14px 4px 0;font:600 12px var(--font-body);color:var(--color-neutral-700)">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:999px;background:var(--color-accent-2-700)"></span>{{ visitedCount }} besucht</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:999px;border:2px dashed var(--color-accent-600)"></span>{{ openCount }} offen</span>
+</div>
+</div>
+</sc-if>
+
+<!-- stamp grid -->
+<sc-if value="{{ isStampView }}">
+<div style="padding:16px 20px 24px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px">
+<span style="font:600 13px var(--font-body);color:var(--color-neutral-700)">{{ gridLabel }}</span>
+</div>
+<sc-if value="{{ gridEmpty }}">
+<div style="padding:34px 20px;border-radius:var(--radius-md);background:var(--color-neutral-100);text-align:center">
+<div style="font:400 18px var(--font-heading);color:var(--color-accent-2-900)">Keine Stempelstelle</div>
+<div style="font:400 12.5px var(--font-body);color:var(--color-neutral-600);padding-top:4px">Diese Kombination aus Filter und Collection ist leer.</div>
+</div>
+</sc-if>
+<div style="display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:var(--space-3)">
+<sc-for list="{{ stamps }}" as="s" hint-placeholder-count="12">
+<div onClick="{{ s.open }}" style="position:relative;aspect-ratio:1;border-radius:var(--radius-md);background:var(--color-neutral-100);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden">
+<sc-if value="{{ s.visited }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:7px;border-radius:999px;border:2.5px solid {{ ink }};color:{{ ink }};opacity:{{ inkOpacity }};mix-blend-mode:multiply;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transform:rotate({{ s.rot }}deg)">
+<div style="position:absolute;inset:4px;border-radius:999px;border:1px dashed currentColor;opacity:{{ ringOpacity }}"></div>
+<span style="font:400 {{ numSize }}px var(--font-heading);line-height:1">{{ s.nr }}</span>
+<span style="font:700 {{ nameSize }}px var(--font-body);letter-spacing:.06em;text-transform:uppercase;text-align:center;max-width:74%;line-height:1.15">{{ s.short }}</span>
+<span style="font:600 {{ dateSize }}px var(--font-body);letter-spacing:.1em;opacity:.85">{{ s.date }}</span>
+</div>
+</sc-if>
+<sc-if value="{{ s.isOpen }}">
+<div style="position:absolute;inset:7px;border-radius:999px;border:2px dashed var(--color-neutral-400);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--color-neutral-500)">
+<span style="font:400 {{ numSizeOpen }}px var(--font-heading);line-height:1">{{ s.nr }}</span>
+<span style="font:600 {{ nameSize }}px var(--font-body);letter-spacing:.08em;text-transform:uppercase">offen</span>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<!-- ─── ERFOLGE ─── -->
+<sc-if value="{{ isErfolge }}">
+<div>
+<div class="hs" onScroll="{{ onCarousel }}" ref="{{ carouselRef }}" style="display:flex;align-items:flex-start;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 3% 0">
+<!-- card 1: next nadel -->
+<div style="flex:none;width:94%;scroll-snap-align:center;border-radius:var(--radius-lg);padding:22px;background:var(--color-accent-2-800);color:#f7f2e6;box-shadow:var(--shadow-md)">
+<div style="font:600 11px var(--font-body);letter-spacing:.14em;text-transform:uppercase;opacity:.75">Nächste Nadel</div>
+<h4 style="margin:8px 0 0;font-size:23px;color:#fdf8ec">Harzer Wanderkönig</h4>
+<div style="display:flex;align-items:center;gap:20px;padding-top:18px">
+<div style="position:relative;width:104px;height:104px;flex:none;border-radius:999px;background:conic-gradient(var(--color-accent-400) 0 92%,rgba(255,255,255,.16) 92% 100%);display:flex;align-items:center;justify-content:center">
+<div style="width:78px;height:78px;border-radius:999px;background:var(--color-accent-2-800);display:flex;flex-direction:column;align-items:center;justify-content:center">
+<span style="font:400 26px var(--font-heading);line-height:1;color:#fdf8ec">46</span>
+<span style="font:600 10px var(--font-body);opacity:.7">von 50</span>
+</div>
+</div>
+<div style="flex:1">
+<p style="margin:0 0 10px;font-size:13.5px;line-height:1.5;opacity:.85">Noch <strong>4 Stempel</strong> bis zur Nadel in Silber-Gold. Empfohlen im Umkreis:</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px">
+<span style="padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.14);font:600 11.5px var(--font-body)">25 Torfhaus</span>
+<span style="padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.14);font:600 11.5px var(--font-body)">27 Achtermann</span>
+</div>
+</div>
+</div>
+</div>
+<!-- card 2: gesamt -->
+<div style="flex:none;width:94%;scroll-snap-align:center;border-radius:var(--radius-lg);padding:22px;background:var(--color-neutral-100);box-shadow:var(--shadow-md)">
+<div style="font:600 11px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Gesamtfortschritt</div>
+<div style="display:flex;align-items:baseline;gap:8px;padding-top:8px">
+<span style="font:400 44px var(--font-heading);line-height:1;color:var(--color-accent-2-900)">46</span>
+<span style="font:600 16px var(--font-body);color:var(--color-neutral-600)">von 222 Stempelstellen</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(37,1fr);gap:2.5px;padding:18px 0 14px">
+<sc-for list="{{ blocks }}" as="b" hint-placeholder-count="37">
+<span style="height:12px;border-radius:2px;background:{{ b.bg }}"></span>
+</sc-for>
+</div>
+<div style="display:flex;gap:18px">
+<div><div style="font:400 20px var(--font-heading);color:var(--color-accent-2-800)">21%</div><div style="font:600 11px var(--font-body);color:var(--color-neutral-600)">gesammelt</div></div>
+<div><div style="font:400 20px var(--font-heading);color:var(--color-accent-2-800)">7</div><div style="font:600 11px var(--font-body);color:var(--color-neutral-600)">Regionen</div></div>
+<div><div style="font:400 20px var(--font-heading);color:var(--color-accent-2-800)">312 km</div><div style="font:600 11px var(--font-body);color:var(--color-neutral-600)">gewandert</div></div>
+</div>
+</div>
+<!-- card 3: zuletzt erreicht -->
+<div style="flex:none;width:94%;scroll-snap-align:center;border-radius:var(--radius-lg);padding:22px;background:var(--color-surface);box-shadow:var(--shadow-md)">
+<div style="font:600 11px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-700)">Zuletzt erreicht</div>
+<h4 style="margin:8px 0 14px;font-size:21px;color:var(--color-accent-2-900)">Die letzten drei Stempel</h4>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ recent }}" as="e" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:var(--radius-md);background:var(--color-neutral-100)">
+<span style="width:32px;height:32px;flex:none;border-radius:999px;border:2px solid {{ ink }};color:{{ ink }};display:flex;align-items:center;justify-content:center;font:400 14px var(--font-heading)">{{ e.nr }}</span>
+<div style="flex:1">
+<div style="font:600 13.5px var(--font-body);color:var(--color-accent-2-900)">{{ e.name }}</div>
+<div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">{{ e.date }} · {{ e.region }}</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+<div style="display:flex;justify-content:center;gap:7px;padding:16px 0 4px">
+<sc-for list="{{ dots }}" as="d" hint-placeholder-count="3">
+<span onClick="{{ d.go }}" style="width:{{ d.w }}px;height:7px;border-radius:999px;cursor:pointer;background:var(--color-accent-2-700);opacity:{{ d.op }}"></span>
+</sc-for>
+</div>
+<div style="padding:8px 20px 24px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:10px">
+<span style="font:600 13px var(--font-body);color:var(--color-neutral-700)">Kollektionen</span>
+<span style="font:600 12px var(--font-body);color:var(--color-accent-700)">3 von 5</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ needles }}" as="n" hint-placeholder-count="5">
+<div onClick="{{ n.open }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-md);background:{{ n.bg }};box-shadow:var(--shadow-sm);cursor:pointer">
+<div style="width:36px;height:36px;flex:none;border-radius:999px;border:2.5px solid {{ n.ring }};display:flex;align-items:center;justify-content:center;color:{{ n.ring }}">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><circle cx="12" cy="9" r="6"></circle><path d="M9 15l-2 7 5-3 5 3-2-7"></path></svg>
+</div>
+<div style="flex:1">
+<div style="font:600 14px var(--font-body);color:var(--color-accent-2-900)">{{ n.name }}</div>
+<div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">{{ n.req }}</div>
+</div>
+<span style="font:600 11.5px var(--font-body);color:{{ n.ring }}">{{ n.status }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- ─── PROFIL ─── -->
+<sc-if value="{{ isProfil }}">
+<div style="padding:4px 20px 24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius-lg);background:var(--color-surface);box-shadow:var(--shadow-sm)">
+<div style="width:58px;height:58px;flex:none;border-radius:999px;background:var(--color-accent-2-700);color:#f7f2e6;display:flex;align-items:center;justify-content:center;font:400 22px var(--font-heading)">MK</div>
+<div style="flex:1">
+<div style="font:400 20px var(--font-heading);color:var(--color-accent-2-900)">Marlene Köhler</div>
+<div style="font:600 12px var(--font-body);color:var(--color-neutral-600)">Wanderpass {{ pass }} · seit {{ since }}</div>
+</div>
+<div onClick="{{ openEdit }}" style="width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:999px;background:var(--color-neutral-100);border:1px solid var(--color-divider);color:var(--color-accent-700);cursor:pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+</div>
+</div>
+
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600);padding:6px 4px 0">Darstellung</div>
+<div style="border-radius:var(--radius-md);background:var(--color-neutral-100);box-shadow:var(--shadow-sm);overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+<div style="flex:1"><div style="font:600 14.5px var(--font-body);color:var(--color-accent-2-900)">Dunkler Modus</div><div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">Dunkle Farben für Karte, Erfolge &amp; Profil.</div></div>
+<div onClick="{{ toggleDarkMode }}" style="width:50px;height:29px;flex:none;border-radius:999px;cursor:pointer;padding:3px;transition:background .18s;background:{{ darkBg }};display:flex;justify-content:{{ darkPos }}">
+<span style="width:23px;height:23px;border-radius:999px;background:#fdf8ec;box-shadow:var(--shadow-sm)"></span>
+</div>
+</div>
+</div>
+
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600);padding:6px 4px 0">Unterwegs</div>
+<div style="border-radius:var(--radius-md);background:var(--color-neutral-100);box-shadow:var(--shadow-sm);overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--color-divider)">
+<div style="flex:1"><div style="font:600 14.5px var(--font-body);color:var(--color-accent-2-900)">GPS</div><div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">Die App berechtigen GPS zu verwenden.</div></div>
+<div onClick="{{ toggleGps }}" style="width:50px;height:29px;flex:none;border-radius:999px;cursor:pointer;padding:3px;transition:background .18s;background:{{ gpsBg }};display:flex;justify-content:{{ gpsPos }}">
+<span style="width:23px;height:23px;border-radius:999px;background:#fdf8ec;box-shadow:var(--shadow-sm)"></span>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+<div style="flex:1"><div style="font:600 14.5px var(--font-body);color:var(--color-accent-2-900)">Offline-Karte</div><div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">{{ offlineNote }}</div></div>
+<div onClick="{{ toggleOffline }}" style="width:50px;height:29px;flex:none;border-radius:999px;cursor:pointer;padding:3px;transition:background .18s;background:{{ offBg }};display:flex;justify-content:{{ offPos }}">
+<span style="width:23px;height:23px;border-radius:999px;background:#fdf8ec;box-shadow:var(--shadow-sm)"></span>
+</div>
+</div>
+</div>
+
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600);padding:6px 4px 0">Feedback &amp; Support</div>
+<div style="border-radius:var(--radius-md);background:var(--color-neutral-100);box-shadow:var(--shadow-sm);overflow:hidden">
+<sc-for list="{{ supportRows }}" as="s" hint-placeholder-count="2">
+<div onClick="{{ s.open }}" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--color-divider);cursor:pointer">
+<div style="flex:1">
+<div style="font:600 14.5px var(--font-body);color:var(--color-accent-2-900)">{{ s.label }}</div>
+<div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">{{ s.sub }}</div>
+</div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="2.75" stroke-linecap="round"><path d="m9 6 6 6-6 6"></path></svg>
+</div>
+</sc-for>
+</div>
+
+<div onClick="{{ openEmergency }}" style="display:flex;align-items:center;gap:13px;padding:16px;border-radius:var(--radius-md);background:#fbe6df;border:1.5px solid #c95030;cursor:pointer">
+<div style="width:36px;height:36px;flex:none;border-radius:999px;background:#b3401f;color:#fdf1ec;display:flex;align-items:center;justify-content:center">
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 2.6 17a1.8 1.8 0 0 0 1.6 2.7h15.6a1.8 1.8 0 0 0 1.6-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0Z"></path></svg>
+</div>
+<div style="flex:1">
+<div style="font:600 15px var(--font-body);color:#8e2f14">Notfall-Informationen</div>
+<div style="font:400 11.5px var(--font-body);color:#a8482c">Bergwacht 112 · Standort teilen · nächste Schutzhütte</div>
+</div>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b3401f" stroke-width="2.75" stroke-linecap="round"><path d="m9 6 6 6-6 6"></path></svg>
+</div>
+
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600);padding:6px 4px 0">Rechtliches</div>
+<div style="border-radius:var(--radius-md);background:var(--color-neutral-100);box-shadow:var(--shadow-sm);overflow:hidden">
+<sc-for list="{{ legalRows }}" as="l" hint-placeholder-count="2">
+<div style="display:flex;align-items:center;gap:12px;padding:15px 16px;border-bottom:1px solid var(--color-divider);cursor:pointer">
+<span style="flex:1;font:600 14.5px var(--font-body);color:var(--color-accent-2-900)">{{ l.label }}</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="2.75" stroke-linecap="round"><path d="m9 6 6 6-6 6"></path></svg>
+</div>
+</sc-for>
+</div>
+
+<div style="text-align:center;font:400 11px var(--font-body);color:var(--color-neutral-500);padding-top:2px">Harzer Wandernadel · Version 2.4.1</div>
+</div>
+</sc-if>
+
+<div style="height:96px"></div>
+</div>
+
+<!-- ══ tab bar ══ -->
+<div style="position:absolute;left:0;right:0;bottom:0;z-index:20;padding:8px 12px 30px;background:var(--color-bg);display:flex;gap:4px;border-top:1px solid var(--color-divider)">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+<div onClick="{{ t.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;border-radius:var(--radius-md);cursor:pointer;background:{{ t.bg }};color:{{ t.fg }}">
+<span ref="{{ t.iconRef }}" style="display:flex"></span>
+<span style="font:600 10.5px var(--font-body);letter-spacing:.02em">{{ t.label }}</span>
+</div>
+</sc-for>
+</div>
+
+<!-- ══ detail modal ══ -->
+<sc-if value="{{ hasSel }}">
+<div onClick="{{ closeSel }}" style="position:absolute;inset:0;z-index:40;background:rgba(32,30,29,.42);display:flex;align-items:flex-end">
+<div onClick="{{ stop }}" style="width:100%;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:22px 20px 34px;box-shadow:var(--shadow-lg);animation:popIn .22s ease-out">
+<div style="width:44px;height:4px;border-radius:999px;background:var(--color-neutral-400);margin:0 auto 16px"></div>
+<div style="display:flex;gap:16px;align-items:flex-start">
+<div style="width:96px;height:96px;flex:none;border-radius:var(--radius-md);background:var(--color-neutral-100);box-shadow:var(--shadow-sm);position:relative;display:flex;align-items:center;justify-content:center">
+<div style="position:absolute;inset:9px;border-radius:999px;border:2.5px solid {{ ink }};color:{{ ink }};opacity:{{ selInk }};display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-6deg)">
+<div style="position:absolute;inset:5px;border-radius:999px;border:1px dashed currentColor;opacity:.7"></div>
+<span style="font:400 26px var(--font-heading);line-height:1">{{ selNr }}</span>
+<span style="font:700 7px var(--font-body);letter-spacing:.06em;text-transform:uppercase;text-align:center;max-width:76%;line-height:1.15">{{ selShort }}</span>
+</div>
+</div>
+<div style="flex:1">
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-700)">Stempelstelle {{ selNr }}</div>
+<h4 style="margin:6px 0 6px;font-size:22px;color:var(--color-accent-2-900)">{{ selName }}</h4>
+<div style="font:400 13px var(--font-body);color:var(--color-neutral-700)">{{ selRegion }} · {{ selAlt }} m ü. NN</div>
+<div style="padding-top:10px"><span style="display:inline-block;padding:5px 11px;border-radius:999px;background:{{ selBadgeBg }};color:{{ selBadgeFg }};font:600 11.5px var(--font-body)">{{ selBadge }}</span></div>
+</div>
+</div>
+<p style="margin:16px 0 0;font-size:13.5px;line-height:1.55;color:var(--color-neutral-700)">{{ selText }}</p>
+<div style="display:flex;gap:10px;padding-top:16px">
+<div style="flex:1;padding:13px;border-radius:999px;text-align:center;background:var(--color-accent);color:var(--color-bg);font:400 15px var(--font-heading);cursor:pointer">{{ selCta }}</div>
+<div style="width:52px;height:48px;flex:none;border-radius:999px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;color:var(--color-accent-2-800);cursor:pointer">
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.4"></circle></svg>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- ══ filter sheet ══ -->
+<sc-if value="{{ showFilterSheet }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:45;background:rgba(32,30,29,.42);display:flex;align-items:flex-end">
+<div onClick="{{ stop }}" style="width:100%;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:22px 20px 34px;box-shadow:var(--shadow-lg);animation:popIn .22s ease-out">
+<div style="width:44px;height:4px;border-radius:999px;background:var(--color-neutral-400);margin:0 auto 16px"></div>
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<h4 style="margin:0;font-size:22px;color:var(--color-accent-2-900)">Filter</h4>
+<span onClick="{{ resetFilter }}" style="font:600 12.5px var(--font-body);color:var(--color-accent-700);cursor:pointer">Zurücksetzen</span>
+</div>
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600);padding:18px 0 9px">Collection · nur eine</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ collections }}" as="co" hint-placeholder-count="5">
+<div onClick="{{ co.pick }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-md);cursor:pointer;background:{{ co.bg }};border:1.5px solid {{ co.border }}">
+<span style="width:20px;height:20px;flex:none;border-radius:999px;border:2.5px solid {{ co.dotBorder }};display:flex;align-items:center;justify-content:center">
+<span style="width:9px;height:9px;border-radius:999px;background:{{ co.dot }}"></span>
+</span>
+<span style="flex:1;font:600 14px var(--font-body);color:var(--color-accent-2-900)">{{ co.name }}</span>
+<span style="font:600 12px var(--font-body);color:var(--color-neutral-600)">{{ co.count }}</span>
+</div>
+</sc-for>
+</div>
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600);padding:20px 0 9px">Auf der Karte</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius-md);background:var(--color-neutral-100)">
+<div style="flex:1"><div style="font:600 14.5px var(--font-body);color:var(--color-accent-2-900)">Parkplätze anzeigen</div><div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">Wanderparkplätze an den Zustiegen</div></div>
+<div onClick="{{ toggleParking }}" style="width:50px;height:29px;flex:none;border-radius:999px;cursor:pointer;padding:3px;transition:background .18s;background:{{ parkBg }};display:flex;justify-content:{{ parkPos }}">
+<span style="width:23px;height:23px;border-radius:999px;background:#fdf8ec;box-shadow:var(--shadow-sm)"></span>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius-md);background:var(--color-neutral-100);margin-top:8px">
+<div style="flex:1"><div style="font:600 14.5px var(--font-body);color:var(--color-accent-2-900)">Schutzhütten anzeigen</div><div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">Unterstände und Rastplätze am Weg</div></div>
+<div onClick="{{ toggleShelters }}" style="width:50px;height:29px;flex:none;border-radius:999px;cursor:pointer;padding:3px;transition:background .18s;background:{{ shelterBg }};display:flex;justify-content:{{ shelterPos }}">
+<span style="width:23px;height:23px;border-radius:999px;background:#fdf8ec;box-shadow:var(--shadow-sm)"></span>
+</div>
+</div>
+<div onClick="{{ closeSheet }}" style="margin-top:18px;padding:13px;border-radius:999px;text-align:center;background:var(--color-accent);color:var(--color-bg);font:400 15px var(--font-heading);cursor:pointer">{{ filterCta }}</div>
+</div>
+</div>
+</sc-if>
+
+<!-- ══ edit pass sheet ══ -->
+<sc-if value="{{ showEditSheet }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:45;background:rgba(32,30,29,.42);display:flex;align-items:flex-end">
+<div onClick="{{ stop }}" style="width:100%;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:22px 20px 34px;box-shadow:var(--shadow-lg);animation:popIn .22s ease-out">
+<div style="width:44px;height:4px;border-radius:999px;background:var(--color-neutral-400);margin:0 auto 16px"></div>
+<h4 style="margin:0 0 4px;font-size:22px;color:var(--color-accent-2-900)">Wanderpass</h4>
+<p style="margin:0 0 18px;font-size:13px;color:var(--color-neutral-700)">Passnummer und Beginn des Sammelns.</p>
+<div class="field" style="padding-bottom:14px">
+<label>Wanderpass-Nr.</label>
+<input class="input" value="{{ draftPass }}" onChange="{{ onPass }}" style="width:100%">
+</div>
+<div style="display:flex;gap:10px">
+<div class="field" style="flex:1">
+<label>Monat</label>
+<select class="input" value="{{ draftMonth }}" onChange="{{ onMonth }}" style="width:100%">
+<sc-for list="{{ months }}" as="m" hint-placeholder-count="12">
+<option value="{{ m.v }}">{{ m.l }}</option>
+</sc-for>
+</select>
+</div>
+<div class="field" style="flex:1">
+<label>Jahr</label>
+<select class="input" value="{{ draftYear }}" onChange="{{ onYear }}" style="width:100%">
+<sc-for list="{{ years }}" as="y" hint-placeholder-count="6">
+<option value="{{ y.v }}">{{ y.v }}</option>
+</sc-for>
+</select>
+</div>
+</div>
+<div style="display:flex;gap:10px;padding-top:20px">
+<div onClick="{{ closeSheet }}" style="flex:1;padding:13px;border-radius:999px;text-align:center;border:1px solid var(--color-divider);font:400 15px var(--font-heading);color:var(--color-accent-2-900);cursor:pointer">Abbrechen</div>
+<div onClick="{{ savePass }}" style="flex:1;padding:13px;border-radius:999px;text-align:center;background:var(--color-accent);color:var(--color-bg);font:400 15px var(--font-heading);cursor:pointer">Speichern</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- ══ emergency sheet ══ -->
+<sc-if value="{{ showEmergencySheet }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:46;background:rgba(32,30,29,.5);display:flex;align-items:flex-end">
+<div onClick="{{ stop }}" style="width:100%;max-height:96%;overflow-y:auto;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:22px 20px 34px;box-shadow:var(--shadow-lg);animation:popIn .22s ease-out">
+<div style="width:44px;height:4px;border-radius:999px;background:var(--color-neutral-400);margin:0 auto 16px"></div>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:38px;height:38px;flex:none;border-radius:999px;background:#b3401f;color:#fdf1ec;display:flex;align-items:center;justify-content:center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 2.6 17a1.8 1.8 0 0 0 1.6 2.7h15.6a1.8 1.8 0 0 0 1.6-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0Z"></path></svg>
+</div>
+<h4 style="margin:0;font-size:22px;color:#8e2f14">Notfall-Informationen</h4>
+</div>
+
+<div style="margin-top:18px;padding:16px;border-radius:var(--radius-md);background:#fbe6df;border:1.5px solid #c95030">
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:#a8482c">Dein Standort</div>
+<div style="font:400 21px var(--font-heading);color:#8e2f14;padding-top:6px">51°47′57″ N · 10°36′56″ E</div>
+<div style="font:600 12.5px var(--font-body);color:#a8482c;padding-top:2px">Brockenplateau · 1.141 m ü. NN · Genauigkeit ±8 m</div>
+<div style="display:flex;gap:8px;padding-top:14px">
+<div style="flex:1;padding:11px;border-radius:999px;text-align:center;background:#b3401f;color:#fdf1ec;font:400 14px var(--font-heading);cursor:pointer">Standort senden</div>
+<div style="flex:1;padding:11px;border-radius:999px;text-align:center;border:1.5px solid #c95030;color:#8e2f14;font:400 14px var(--font-heading);cursor:pointer">Kopieren</div>
+</div>
+</div>
+
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600);padding:20px 0 9px">Notrufnummern</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ emergencyNumbers }}" as="e" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:var(--radius-md);background:{{ e.bg }};border:1px solid {{ e.border }};cursor:pointer">
+<div style="width:34px;height:34px;flex:none;border-radius:999px;background:{{ e.dot }};color:#fdf1ec;display:flex;align-items:center;justify-content:center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1.5 1.5 0 0 1-1.7 1.5A16.5 16.5 0 0 1 3.5 5.7A1.5 1.5 0 0 1 5 4Z"></path></svg>
+</div>
+<div style="flex:1">
+<div style="font:600 14px var(--font-body);color:var(--color-accent-2-900)">{{ e.name }}</div>
+<div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">{{ e.note }}</div>
+</div>
+<span style="font:400 16px var(--font-heading);color:{{ e.dot }};white-space:nowrap">{{ e.tel }}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="font:600 11px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-600);padding:20px 0 9px">In der Nähe</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ shelters }}" as="h" hint-placeholder-count="2">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:var(--radius-md);background:var(--color-neutral-100)">
+<div style="flex:1"><div style="font:600 14px var(--font-body);color:var(--color-accent-2-900)">{{ h.name }}</div><div style="font:400 11.5px var(--font-body);color:var(--color-neutral-600)">{{ h.note }}</div></div>
+<span style="font:600 12.5px var(--font-body);color:var(--color-accent-700)">{{ h.dist }}</span>
+</div>
+</sc-for>
+</div>
+<div onClick="{{ closeSheet }}" style="margin-top:18px;padding:13px;border-radius:999px;text-align:center;border:1px solid var(--color-divider);font:400 15px var(--font-heading);color:var(--color-accent-2-900);cursor:pointer">Schließen</div>
+</div>
+</div>
+</sc-if>
+
+<!-- ══ needle sheet ══ -->
+<sc-if value="{{ showNeedleSheet }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:46;background:rgba(32,30,29,.5);display:flex;align-items:flex-end">
+<div onClick="{{ stop }}" style="width:100%;max-height:96%;overflow-y:auto;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:22px 20px 34px;box-shadow:var(--shadow-lg);animation:popIn .22s ease-out">
+<div style="width:44px;height:4px;border-radius:999px;background:var(--color-neutral-400);margin:0 auto 6px"></div>
+
+<div style="display:flex;flex-direction:column;align-items:center;padding:12px 0 4px">
+<div style="width:132px;height:132px;border-radius:999px;background:radial-gradient(70% 70% at 32% 26%,{{ ndRing }},{{ ndMetal }});box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center">
+<div style="width:104px;height:104px;border-radius:999px;border:2px dashed rgba(255,255,255,.45);padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fdf8ec">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M12 3 4 9h16Z"></path><path d="M5 21v-6l7-4 7 4v6"></path></svg>
+<span style="font:400 12.5px var(--font-heading);line-height:1.15;padding-top:6px;max-width:70px;text-align:center;text-wrap:balance">{{ nd.tier }}</span>
+</div>
+</div>
+<h4 style="margin:16px 0 0;font-size:24px;color:var(--color-accent-2-900);text-align:center">{{ ndName }}</h4>
+<span style="margin-top:8px;padding:5px 12px;border-radius:999px;background:{{ ndStatusBg }};color:{{ ndStatusFg }};font:600 11.5px var(--font-body)">{{ ndStatus }}</span>
+</div>
+
+<div style="margin-top:18px;padding:16px;border-radius:var(--radius-md);background:var(--color-neutral-100)">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:600 12px var(--font-body);color:var(--color-neutral-700)">Fortschritt</span>
+<span style="font:400 18px var(--font-heading);color:var(--color-accent-2-900)">{{ ndHave }} / {{ ndReq }}</span>
+</div>
+<div style="height:12px;border-radius:999px;background:var(--color-neutral-300);margin-top:10px;overflow:hidden">
+<div style="height:100%;border-radius:999px;background:{{ ndMetal }};width:{{ ndPct }}"></div>
+</div>
+<div style="font:600 11.5px var(--font-body);color:var(--color-neutral-600);padding-top:8px">{{ ndPct }} erreicht</div>
+</div>
+
+<div style="margin-top:18px;padding:18px;border-radius:var(--radius-md);background:var(--color-surface)">
+<p style="margin:0;font-size:15.5px;line-height:1.7;color:var(--color-neutral-700);text-wrap:pretty">{{ ndDesc }}</p>
+</div>
+
+<div style="display:flex;gap:10px;padding-top:20px">
+<div onClick="{{ closeSheet }}" style="width:52px;flex:none;border-radius:999px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-divider);color:var(--color-accent-2-900);cursor:pointer">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+</div>
+<div onClick="{{ ndAction }}" style="flex:1;padding:13px;border-radius:999px;text-align:center;background:var(--color-accent);color:var(--color-bg);font:400 15px var(--font-heading);cursor:pointer">{{ ndCta }}</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- ══ feedback sheet ══ -->
+<sc-if value="{{ showFeedbackSheet }}">
+<div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:46;background:rgba(32,30,29,.42);display:flex;align-items:flex-end">
+<div onClick="{{ stop }}" style="width:100%;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:22px 20px 34px;box-shadow:var(--shadow-lg);animation:popIn .22s ease-out">
+<div style="width:44px;height:4px;border-radius:999px;background:var(--color-neutral-400);margin:0 auto 16px"></div>
+<sc-if value="{{ feedbackSent }}">
+<div style="text-align:center;padding:16px 0 8px">
+<div style="width:56px;height:56px;margin:0 auto;border-radius:999px;background:var(--color-accent-2-200);color:var(--color-accent-2-800);display:flex;align-items:center;justify-content:center">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5L20 6"></path></svg>
+</div>
+<h4 style="margin:14px 0 4px;font-size:22px;color:var(--color-accent-2-900)">Danke!</h4>
+<p style="margin:0;font-size:13.5px;color:var(--color-neutral-700)">Dein Feedback ist unterwegs.</p>
+<div onClick="{{ closeSheet }}" style="margin-top:18px;padding:13px;border-radius:999px;background:var(--color-accent);color:var(--color-bg);font:400 15px var(--font-heading);cursor:pointer">Fertig</div>
+</div>
+</sc-if>
+<sc-if value="{{ feedbackForm }}" hint-placeholder-val="{{ true }}">
+<div>
+<h4 style="margin:0 0 4px;font-size:22px;color:var(--color-accent-2-900)">Feedback</h4>
+<p style="margin:0 0 18px;font-size:13px;color:var(--color-neutral-700)">Hilf mir die App besser zu machen.</p>
+<div class="field" style="padding-bottom:14px">
+<label>Titel</label>
+<input class="input" value="{{ fbTitle }}" onChange="{{ onFbTitle }}" placeholder="Kurz zusammengefasst" style="width:100%">
+</div>
+<div class="field">
+<label>Dein Feedback</label>
+<textarea class="input" value="{{ fbText }}" onChange="{{ onFbText }}" placeholder="Was ist dir aufgefallen?" style="width:100%;height:132px;border-radius:var(--radius-md);resize:none;padding:12px 14px"></textarea>
+</div>
+<div onClick="{{ sendFeedback }}" style="margin-top:18px;padding:13px;border-radius:999px;text-align:center;background:{{ fbBtnBg }};color:var(--color-bg);font:400 15px var(--font-heading);cursor:pointer">Feedback verschicken</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;440&quot;,&quot;height&quot;:&quot;960&quot;},
+&quot;inkColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3d472b&quot;,&quot;options&quot;:[&quot;#3d472b&quot;,&quot;#8c491a&quot;,&quot;#2e2b25&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Stempel-Tinte&quot;},
+&quot;stampWear&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.5,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Stempel-Tinte&quot;},
+&quot;stampsPerRow&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;3 pro Reihe&quot;,&quot;options&quot;:[&quot;2 pro Reihe&quot;,&quot;3 pro Reihe&quot;,&quot;4 pro Reihe&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Stempelbuch&quot;}}">
+const S = [
+  [1,'Kloster Walkenried','Walkenried','Südharz',230,1,18,88],
+  [2,'Sachsenstein','Bad Sachsa','Südharz',300,1,26,80],
+  [6,'Rhumequelle','Rhumspringe','Westharz',180,1,10,72],
+  [9,'Eichsfelder Warte','Barbis','Südharz',420,0,14,64],
+  [11,'Ruine Hohnstein','Neustadt','Südharz',380,1,32,73],
+  [14,'Josephskreuz','Stolberg','Ostharz',580,1,78,60],
+  [17,'Ravensberg','Bad Sachsa','Südharz',659,0,30,68],
+  [20,'Rabenklippe','Bad Harzburg','Nordharz',530,1,56,22],
+  [22,'Brocken','Schierke','Hochharz',1141,1,48,34],
+  [25,'Torfhaus','Altenau','Hochharz',801,0,38,36],
+  [27,'Achtermannshöhe','Braunlage','Hochharz',925,0,42,44],
+  [30,'Wurmberg','Braunlage','Hochharz',971,1,40,50],
+  [33,'Schierke Feuerstein','Schierke','Hochharz',620,1,52,30],
+  [35,'Ilsestein','Ilsenburg','Nordharz',472,1,60,26],
+  [38,'Scharfenstein','Thale','Ostharz',696,0,70,40],
+  [41,'Hexentanzplatz','Thale','Ostharz',454,1,80,44],
+  [44,'Roßtrappe','Thale','Ostharz',403,1,84,48],
+  [47,'Bodekessel','Treseburg','Ostharz',290,0,76,50],
+  [50,'Teufelsmauer','Weddersleben','Vorharz',215,1,88,36],
+  [53,'Selketal','Alexisbad','Ostharz',280,0,82,66],
+  [56,'Burg Falkenstein','Meisdorf','Ostharz',330,1,90,62],
+  [59,'Baumannshöhle','Rübeland','Mittelharz',330,0,66,46],
+  [62,'Rappbodetalsperre','Hasselfelde','Mittelharz',424,1,62,54],
+  [65,'Okertalsperre','Altenau','Westharz',420,0,34,26],
+  [68,'Kästehaus','Clausthal','Westharz',626,0,28,38],
+  [71,'Iberger Höhle','Bad Grund','Westharz',480,1,20,44],
+  [74,'Sösetalsperre','Osterode','Westharz',340,0,16,52],
+  [77,'Innerstetalsperre','Langelsheim','Nordharz',300,0,24,16],
+  [80,'Auerhahn','Clausthal','Westharz',600,0,30,48],
+  [83,'Ottiliae-Schacht','Clausthal','Westharz',560,1,26,42],
+  [86,'Sperrlutertal','Bad Lauterberg','Südharz',290,0,22,76],
+  [89,'Königshütte','Elbingerode','Mittelharz',400,0,58,50],
+  [92,'Trogfurter Brücke','Elend','Hochharz',560,0,50,42],
+  [95,'Grenzweg Eckertal','Bad Harzburg','Nordharz',460,1,52,18],
+  [98,'Molkenhaus','Bad Harzburg','Nordharz',480,0,50,22],
+  [101,'Steinerne Renne','Wernigerode','Nordharz',380,1,64,32],
+];
+const DATES = ['12.04.','21.04.','03.05.','17.05.','29.05.','08.06.','19.06.','02.07.','11.07.','23.07.','30.07.','05.08.','09.08.','14.08.'];
+const ICONS = {
+  karte: 'M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z|M12 10h.01',
+  stempeln: 'M6 21h12M8 21v-3a4 4 0 0 1-4-4v-1h16v1a4 4 0 0 1-4 4v3M9 10V6.5a3 3 0 0 1 6 0V10',
+  erfolge: 'M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM9 14l-2 7 5-3 5 3-2-7',
+  profil: 'M20 21a8 8 0 0 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z',
+};
+const LABELS = { karte:'Karte', erfolge:'Erfolge', profil:'Profil' };
+const ALL_COLL = 'Alle Stempel';
+const COLLECTIONS = [
+  [ALL_COLL, null],
+  ['Harzer Hexenstieg', [22,25,27,30,33,59,62,89,92,101]],
+  ['Brocken-Runde', [22,25,33,35,92,95,98]],
+  ['Selketal-Tour', [14,41,44,47,53,56]],
+  ['Welterbe & Bergbau', [1,11,68,71,80,83]],
+];
+const LOTS = [
+  [44,12,'Wanderparkplatz Torfhaus','Zustieg Goetheweg · Brocken','42 Plätze','4 €/Tag','WC & Bus',  '1,1 km'],
+  [36,58,'P Ilsetal','Zustieg Ilsestein & Brocken','60 Plätze','gebührenfrei','Wasserstelle','8,4 km'],
+  [72,68,'P Hexentanzplatz','Thale, oberhalb des Bodetals','120 Plätze','5 €/Tag','Seilbahn','21 km'],
+  [12,32,'P Iberger Tropfsteinhöhle','Bad Grund, Westharz','25 Plätze','gebührenfrei','Kiosk','34 km'],
+  [94,50,'P Burg Falkenstein','Meisdorf, Selketal','35 Plätze','2 €/Tag','Shuttle','46 km'],
+];
+const HUTS = [
+  [46,62,'Schutzhütte Goethemoor','Am Goetheweg, offen','6 Sitzplätze','Brunnen','Ofen','1,2 km'],
+  [68,20,'Rasthütte Steinerne Renne','Wernigerode, an der Holtemme','8 Sitzplätze','Feuerstelle','Bank','9,6 km'],
+  [36,84,'Schutzhütte Sösetal','Osterode, am Talsperrenweg','4 Sitzplätze','Regenschutz','Karte','29 km'],
+  [74,30,'Rasthütte Bodekessel','Treseburg, Bodetal','10 Sitzplätze','Trinkwasser','WC','24 km'],
+];
+const NEEDLES = [
+  { tier:'Bronze', req:8, have:8, done:1, status:'ziel erreicht', date:'02.05.2025', metal:'#b2622d', ring:'#ffc6a5',
+    desc:'Die erste Stufe: acht beliebige Stempelstellen im Harz. Der klassische Einstieg — meist an einem langen Wochenende geschafft.' },
+  { tier:'Silber', req:16, have:16, done:1, status:'ziel erreicht', date:'19.06.2025', metal:'#a19786', ring:'#dcd3c4',
+    desc:'Sechzehn Stempel, verteilt über mindestens zwei Regionen. Ab hier wird das Stempelbuch zum Tourenplaner.' },
+  { tier:'Gold', req:24, have:24, done:1, status:'ziel erreicht', date:'30.07.2025', metal:'#d67f48', ring:'#ffe1d0',
+    desc:'Vierundzwanzig Stempel — die goldene Nadel gilt als Nachweis für regelmäßiges Wandern im ganzen Harz.' },
+  { tier:'Wanderkönig', req:50, have:46, done:0, status:'4 offen', date:null, metal:'#728157', ring:'#e1eecc',
+    desc:'Fünfzig Stempelstellen. Die Krone unter den mittleren Stufen: Hochharz, Ostharz und Südharz müssen alle vertreten sein.' },
+  { tier:'Wanderkaiser', req:222, have:46, done:0, status:'176 offen', date:null, metal:'#3d472b', ring:'#ccdbb2',
+    desc:'Alle 222 Stempelstellen der Harzer Wandernadel — meist über mehrere Jahre gesammelt. Rund 2.000 Wanderkilometer.' },
+];
+const ISSUERS = ['Nationalpark-Besucherzentrum Torfhaus','Tourist-Information Thale','Harzer Wandernadel Online-Shop'];
+const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+class Component extends DCLogic {
+  componentDidMount() {
+    try {
+      const v = localStorage.getItem('hwn-dark-mode');
+      if (v === '1') this.setState({ darkMode:true });
+    } catch (e) {}
+  }
+  state = {
+    tab:'karte', filter:'alle', view:'karte', sel:null, ach:0, gps:true, offline:false, darkMode:false,
+    collection: ALL_COLL, needleSet:null, parking:false, huts:false, sheet:null, poi:null,
+    pass:'HWN-04812', month:'03', year:'2024',
+    draftPass:'HWN-04812', draftMonth:'03', draftYear:'2024',
+    fbTitle:'', fbText:'', fbSent:false, needle:0,
+  };
+
+  stations() {
+    let d = 0;
+    return S.map(([nr,name,place,region,alt,vis,x,y],i) => ({
+      nr, name, place, region, alt, visited: !!vis, isOpen: !vis,
+      short: name.length > 15 ? name.slice(0,14) + '.' : name,
+      date: vis ? (DATES[(d++) % DATES.length] + '25') : '',
+      rot: ([-7,-3,4,8,-5,2,6,-2][i % 8] * (0.25 + this.wear() * 1.5)).toFixed(1), x, y,
+    }));
+  }
+
+  pick(s) { this.setState({ sel: s }); }
+
+  ink() { return this.props.inkColor ?? '#3d472b'; }
+  wear() { const w = this.props.stampWear; return typeof w === 'number' ? w : 0.5; }
+  cols() { const v = this.props.stampsPerRow ?? '3 pro Reihe'; return parseInt(v, 10) || 3; }
+
+  iconRef(kind, active) {
+    return (el) => {
+      if (!el) return;
+      const c = active ? this.ink() : '#82796a';
+      el.innerHTML = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="' + c +
+        '" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round">' +
+        ICONS[kind].split('|').map(p => '<path d="' + p + '"></path>').join('') + '</svg>';
+    };
+  }
+
+  renderVals() {
+    const st = this.stations();
+    const { tab, filter, view, sel, ach, gps, offline, collection, needleSet, parking, huts, sheet } = this.state;
+    const set = (COLLECTIONS.find(c => c[0] === collection) || [])[1];
+    const f = st.filter(s => (filter === 'alle' || (filter === 'besucht' ? s.visited : s.isOpen))
+      && (!set || set.indexOf(s.nr) > -1)
+      && (!needleSet || needleSet.indexOf(s.nr) > -1));
+    const pill = (on) => on ? 'var(--color-accent-2-800)' : 'var(--color-neutral-100)';
+    const pillFg = (on) => on ? '#f7f2e6' : 'var(--color-neutral-700)';
+    const withOpen = (s) => ({ ...s, open: () => this.pick(s) });
+    const ink = this.ink(), wear = this.wear(), cols = this.cols();
+    const N = NEEDLES[this.state.needle] || NEEDLES[0];
+    const scale = cols === 2 ? 1.45 : cols === 4 ? 0.76 : 1;
+
+    return {
+      ink, cols,
+      inkOpacity: (0.98 - wear * 0.42).toFixed(2),
+      ringOpacity: (0.85 - wear * 0.55).toFixed(2),
+      numSize: (20 * scale).toFixed(1), numSizeOpen: (18 * scale).toFixed(1),
+      nameSize: (6.5 * scale).toFixed(1), dateSize: (6 * scale).toFixed(1),
+      screenTitle: tab === 'karte' ? (view === 'stempel' ? 'Stempeln' : 'Karte') : (tab === 'erfolge' ? 'Erfolge' : 'Profil'),
+      isKarte: tab === 'karte',
+      isErfolge: tab === 'erfolge', isProfil: tab === 'profil',
+      isMapView: view === 'karte', isStampView: view === 'stempel',
+      showMap: () => this.setState({ view:'karte' }),
+      showStamps: () => this.setState({ view:'stempel' }),
+      segMapBg: view === 'karte' ? 'var(--color-neutral-100)' : 'transparent',
+      segMapFg: view === 'karte' ? 'var(--color-accent-2-900)' : 'var(--color-neutral-600)',
+      segMapShadow: view === 'karte' ? 'var(--shadow-sm)' : 'none',
+      segStampBg: view === 'stempel' ? 'var(--color-neutral-100)' : 'transparent',
+      segStampFg: view === 'stempel' ? 'var(--color-accent-2-900)' : 'var(--color-neutral-600)',
+      segStampShadow: view === 'stempel' ? 'var(--shadow-sm)' : 'none',
+
+      collection, collectionShown: collection !== ALL_COLL || !!needleSet,
+      clearCollection: () => this.setState({ collection: ALL_COLL, needleSet:null }),
+      filterActive: collection !== ALL_COLL || !!needleSet || parking || huts,
+      filterBtnBg: (collection !== ALL_COLL || !!needleSet || parking || huts) ? 'var(--color-accent-200)' : 'var(--color-neutral-100)',
+      filterBtnFg: (collection !== ALL_COLL || !!needleSet || parking || huts) ? 'var(--color-accent-800)' : 'var(--color-accent-2-800)',
+      openFilter: () => this.setState({ sheet:'filter' }),
+      closeSheet: () => this.setState({ sheet:null }),
+      showFilterSheet: sheet === 'filter', showEditSheet: sheet === 'edit',
+      resetFilter: () => this.setState({ collection: ALL_COLL, needleSet:null, parking:false, huts:false }),
+      filterCta: f.length + (f.length === 1 ? ' Stempelstelle zeigen' : ' Stempelstellen zeigen'),
+      collections: COLLECTIONS.map(([name, list]) => {
+        const on = collection === name;
+        return {
+          name, count: list ? list.length : 222,
+          pick: () => this.setState({ collection: name }),
+          bg: on ? 'var(--color-accent-2-100)' : 'var(--color-neutral-100)',
+          border: on ? 'var(--color-accent-2-600)' : 'transparent',
+          dotBorder: on ? 'var(--color-accent-2-700)' : 'var(--color-neutral-400)',
+          dot: on ? 'var(--color-accent-2-700)' : 'transparent',
+        };
+      }),
+      parking,
+      lots: LOTS.map(([x,y,name,sub,a,b,c,dist]) => ({
+        x, y, open: () => this.setState({ poi: { kind:'Parkplatz', color:'#5d7ea0', name, sub, tags:[{t:a},{t:b},{t:c}], dist } }),
+      })),
+      hasPoi: !!this.state.poi,
+      poi: this.state.poi || {},
+      poiName: this.state.poi && this.state.poi.name,
+      poiSub: this.state.poi && this.state.poi.sub,
+      poiKind: this.state.poi && this.state.poi.kind,
+      poiColor: this.state.poi ? this.state.poi.color : 'transparent',
+      poiDist: this.state.poi && this.state.poi.dist,
+      poiTags: this.state.poi ? this.state.poi.tags : [],
+      poiIsLot: !!this.state.poi && this.state.poi.kind === 'Parkplatz',
+      poiIsHut: !!this.state.poi && this.state.poi.kind === 'Schutzhütte',
+      closePoi: () => this.setState({ poi: null }),
+      toggleParking: () => this.setState({ parking: !parking }),
+      parkBg: parking ? 'var(--color-accent-2-700)' : 'var(--color-neutral-400)',
+      parkPos: parking ? 'flex-end' : 'flex-start',
+      showShelters: huts,
+      hutMarkers: HUTS.map(([x,y,name,sub,a,b,c,dist]) => ({
+        x, y, open: () => this.setState({ poi: { kind:'Schutzhütte', color:'var(--color-accent-700)', name, sub, tags:[{t:a},{t:b},{t:c}], dist } }),
+      })),
+      toggleShelters: () => this.setState({ huts: !huts }),
+      shelterBg: huts ? 'var(--color-accent-2-700)' : 'var(--color-neutral-400)',
+      shelterPos: huts ? 'flex-end' : 'flex-start',
+
+      pass: this.state.pass, since: this.state.month + '/' + this.state.year,
+      openEdit: () => this.setState({ sheet:'edit', draftPass:this.state.pass, draftMonth:this.state.month, draftYear:this.state.year }),
+      draftPass: this.state.draftPass, draftMonth: this.state.draftMonth, draftYear: this.state.draftYear,
+      onPass: (e) => this.setState({ draftPass: e.target.value }),
+      onMonth: (e) => this.setState({ draftMonth: e.target.value }),
+      onYear: (e) => this.setState({ draftYear: e.target.value }),
+      months: MONTHS.map((l, i) => ({ v: String(i+1).padStart(2,'0'), l })),
+      years: ['2020','2021','2022','2023','2024','2025','2026'].map(v => ({ v })),
+      savePass: () => this.setState({ pass:this.state.draftPass, month:this.state.draftMonth, year:this.state.draftYear, sheet:null }),
+      setFilterAll: () => this.setState({ filter:'alle' }),
+      setFilterVisited: () => this.setState({ filter:'besucht' }),
+      setFilterOpen: () => this.setState({ filter:'offen' }),
+      fAllBg: pill(filter==='alle'), fAllFg: pillFg(filter==='alle'),
+      fVisBg: pill(filter==='besucht'), fVisFg: pillFg(filter==='besucht'),
+      fOpenBg: pill(filter==='offen'), fOpenFg: pillFg(filter==='offen'),
+      pins: f.map(withOpen), rows: f.map(withOpen), stamps: f.map(withOpen),
+      gridRange: f.length ? ('Nr. ' + f[0].nr + '–' + f[f.length-1].nr) : 'keine Treffer',
+      gridLabel: f.length + ' von 222 · sortiert nach Nummer',
+      gridEmpty: f.length === 0,
+      visitedCount: f.filter(s => s.visited).length, openCount: f.filter(s => s.isOpen).length,
+
+      tabs: ['karte','erfolge','profil'].map(k => ({
+        label: LABELS[k], go: () => this.setState({ tab:k, sel:null }),
+        bg: tab === k ? 'var(--color-accent-2-200)' : 'transparent',
+        fg: tab === k ? 'var(--color-accent-2-800)' : 'var(--color-neutral-600)',
+        iconRef: this.iconRef(k, tab === k),
+      })),
+
+      blocks: Array.from({ length: 37 }, (_, i) => ({
+        bg: i < 8 ? 'var(--color-accent-2-700)' : (i === 8 ? 'var(--color-accent-400)' : 'var(--color-neutral-300)'),
+      })),
+      needles: NEEDLES.map((n, i) => ({
+        name: 'Harzer Wandernadel · ' + n.tier, req: n.req + ' Stempel', status: n.status,
+        ring: n.done ? 'var(--color-accent-2-700)' : 'var(--color-neutral-500)',
+        bg: n.done ? 'var(--color-accent-2-100)' : 'var(--color-neutral-100)',
+        open: () => this.setState({ sheet:'nadel', needle:i }),
+      })),
+      recent: st.filter(s => s.visited).slice(-3).reverse().map(s => ({ nr:s.nr, name:s.name, region:s.place, date:s.date })),
+      dots: [0,1,2].map(i => ({
+        w: i === ach ? 20 : 7, op: i === ach ? 1 : 0.28,
+        go: () => { const el = this._car; if (el) el.scrollTo({ left: i * el.clientWidth * 0.97, behavior:'smooth' }); },
+      })),
+      carouselRef: (el) => { this._car = el; },
+      onCarousel: (e) => {
+        const el = e.currentTarget;
+        const i = Math.round(el.scrollLeft / (el.clientWidth * 0.97));
+        if (i !== this.state.ach && i >= 0 && i <= 2) this.setState({ ach: i });
+      },
+
+      gpsBg: gps ? 'var(--color-accent-2-700)' : 'var(--color-neutral-400)',
+      gpsPos: gps ? 'flex-end' : 'flex-start',
+      offBg: offline ? 'var(--color-accent-2-700)' : 'var(--color-neutral-400)',
+      offPos: offline ? 'flex-end' : 'flex-start',
+      offlineNote: offline ? 'Harz-Ost geladen · 248 MB' : 'Karten für Touren ohne Netz laden',
+      toggleGps: () => this.setState({ gps: !gps }),
+      toggleOffline: () => this.setState({ offline: !offline }),
+      darkBg: this.state.darkMode ? 'var(--color-accent-2-700)' : 'var(--color-neutral-400)',
+      darkPos: this.state.darkMode ? 'flex-end' : 'flex-start',
+      toggleDarkMode: () => {
+        const next = !this.state.darkMode;
+        this.setState({ darkMode: next });
+        try { localStorage.setItem('hwn-dark-mode', next ? '1' : '0'); } catch (e) {}
+      },
+      themeVars: this.state.darkMode ? [
+        '--color-bg:#221d18', '--color-surface:#2b2420', '--color-text:#f2e8d8',
+        '--color-accent:#e2884f', '--color-accent-2:#a3b783',
+        '--color-divider:color-mix(in srgb, #f2e8d8 14%, transparent)',
+        '--color-neutral-100:#2f2822', '--color-neutral-200:#3a3229', '--color-neutral-300:#4d443a',
+        '--color-neutral-400:#675c4e', '--color-neutral-500:#8a7d6a', '--color-neutral-600:#ab9f8a',
+        '--color-neutral-700:#c9beac', '--color-neutral-800:#e2d9c8', '--color-neutral-900:#f5efe2',
+        '--color-accent-100:#4a2c18', '--color-accent-200:#5c3820', '--color-accent-300:#7a4b28',
+        '--color-accent-400:#a5652f', '--color-accent-500:#c67139', '--color-accent-600:#d98a52',
+        '--color-accent-700:#e8a476', '--color-accent-800:#f3c39d', '--color-accent-900:#fbe0c8',
+        '--color-accent-2-100:#2c331f', '--color-accent-2-200:#3a4429', '--color-accent-2-300:#4e5a37',
+        '--color-accent-2-400:#687547', '--color-accent-2-500:#7a8a5e', '--color-accent-2-600:#96a578',
+        '--color-accent-2-700:#b3c093', '--color-accent-2-800:#cddab0', '--color-accent-2-900:#e6efd2',
+        '--shadow-sm:0 1px 2px rgba(0,0,0,.5)', '--shadow-md:0 3px 10px rgba(0,0,0,.55)', '--shadow-lg:0 12px 32px rgba(0,0,0,.6)',
+      ].join(';') : '',
+      supportRows: [
+        { label:'Feedback', sub:'Hilf mir die App besser zu machen', open: () => this.setState({ sheet:'feedback', fbTitle:'', fbText:'', fbSent:false }) },
+        { label:'App bewerten', sub:'Gefällt dir die App?', open: () => {} },
+      ],
+      openEmergency: () => this.setState({ sheet:'notfall' }),
+      showEmergencySheet: sheet === 'notfall',
+      emergencyNumbers: [
+        { name:'Euronotruf', note:'Rettung & Feuerwehr, europaweit', tel:'112', primary:1 },
+        { name:'Bergwacht Harz', note:'Einsatzleitung Goslar', tel:'05321 3330', primary:0 },
+        { name:'Polizei', note:'Vermisstenmeldung, Unfall', tel:'110', primary:0 },
+        { name:'Nationalparkwacht', note:'Wegsperrungen, Wildunfälle', tel:'05582 9189-0', primary:0 },
+      ].map(e => ({
+        ...e,
+        bg: e.primary ? '#fbe6df' : 'var(--color-neutral-100)',
+        border: e.primary ? '#c95030' : 'transparent',
+        dot: e.primary ? '#b3401f' : 'var(--color-accent-2-700)',
+      })),
+      shelters: [
+        { name:'Schutzhütte Goethemoor', note:'offen, Brunnen', dist:'1,2 km' },
+        { name:'Brockenhaus (Erste Hilfe)', note:'täglich 9:30–17:00', dist:'0,3 km' },
+      ],
+      showNeedleSheet: sheet === 'nadel',
+      nd: N, ndName: 'Wandernadel · ' + N.tier, ndDesc: N.desc, ndMetal: N.metal, ndRing: N.ring,
+      ndReq: N.req, ndHave: Math.min(N.have, N.req), ndPct: Math.round(Math.min(N.have, N.req) / N.req * 100) + '%',
+      ndDone: !!N.done, ndOpen: !N.done, ndLeft: Math.max(0, N.req - N.have),
+      ndStatus: N.done ? ('Ziel erreicht am ' + N.date) : ('Noch ' + Math.max(0, N.req - N.have) + ' Stempel'),
+      ndStatusBg: N.done ? 'var(--color-accent-2-200)' : 'var(--color-accent-200)',
+      ndStatusFg: N.done ? 'var(--color-accent-2-800)' : 'var(--color-accent-800)',
+      ndCta: N.done ? 'Besuchte Stempel dieser Kollektion' : 'Fehlende Stempel auf der Karte',
+      ndAction: () => {
+        if (N.done) {
+          const belong = st.filter(s => s.visited).slice(0, Math.min(N.req, N.have)).map(s => s.nr);
+          this.setState({ sheet:null, tab:'karte', view:'karte', filter:'besucht', collection:N.tier, needleSet:belong });
+        } else {
+          this.setState({ sheet:null, tab:'karte', view:'karte', filter:'offen' });
+        }
+      },
+      showFeedbackSheet: sheet === 'feedback',
+      feedbackSent: this.state.fbSent, feedbackForm: !this.state.fbSent,
+      fbTitle: this.state.fbTitle, fbText: this.state.fbText,
+      onFbTitle: (e) => this.setState({ fbTitle: e.target.value }),
+      onFbText: (e) => this.setState({ fbText: e.target.value }),
+      fbBtnBg: (this.state.fbTitle || this.state.fbText) ? 'var(--color-accent)' : 'var(--color-neutral-400)',
+      sendFeedback: () => { if (this.state.fbTitle || this.state.fbText) this.setState({ fbSent:true }); },
+      legalRows: [{ label:'Impressum' }, { label:'Datenschutz' }],
+
+      hasSel: !!sel, closeSel: () => this.setState({ sel:null }), stop: (e) => e.stopPropagation(),
+      selNr: sel && sel.nr, selName: sel && sel.name, selShort: sel && sel.short,
+      selRegion: sel && (sel.place + ', ' + sel.region), selAlt: sel && sel.alt,
+      selInk: sel && sel.visited ? (0.98 - wear * 0.42).toFixed(2) : 0.16,
+      selBadge: sel && (sel.visited ? 'Gestempelt am ' + sel.date + ' · 08:42' : 'Noch offen · 2,4 km entfernt'),
+      selBadgeBg: sel && sel.visited ? 'var(--color-accent-2-200)' : 'var(--color-accent-200)',
+      selBadgeFg: sel && sel.visited ? 'var(--color-accent-2-800)' : 'var(--color-accent-800)',
+      selText: sel && (sel.visited
+        ? 'Der Abdruck liegt im Stempelbuch. Stempelkasten am Wegkreuz, ganzjährig zugänglich — Anstieg ab ' + sel.place + ' rund 1,5 Stunden.'
+        : 'Stempelkasten am Wegrand, ganzjährig zugänglich. Zustieg ab ' + sel.place + '; letzte 400 Meter steinig, Trittsicherheit nötig.'),
+      selCta: sel && (sel.visited ? 'Abdruck ansehen' : 'Jetzt stempeln'),
+    };
+  }
+}
+</script>
+</body>
+</html>

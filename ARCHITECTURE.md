@@ -10,11 +10,10 @@ HWN Tracker helps hikers collect stamps ("Stempel") for the **Harzer Wandernadel
 
 **Target users:** hikers, nature lovers, and HWN collectors active in the Harz. Initially free; an eventual paid app-store release is the intended distribution model.
 
-**MVP scope** — four views:
-- **Map** — all stations, filterable by status (all / open / visited) and by collection.
-- **Stamps** — one card per station, same filters as the map, with a "mark as stamped" action.
-- **Badges** — progress per challenge and already-earned badges.
-- **Settings** — app configuration, legal.
+**MVP scope** — three screens (tab bar: Karte / Erfolge / Profil):
+- **Karte (Map)** — all stations on a map, filterable by status (all / open / visited) and by collection; an in-screen "Stempel" toggle switches the same filtered stations into a grid/list view with a "mark as stamped" action. Map and Stamps are one screen with two view modes, not two separate tabs.
+- **Erfolge (Badges)** — progress per Wandernadel tier (bronze/silver/gold/Wanderkönig/Wanderkaiser) and per themed collection, plus already-earned badges.
+- **Profil (Settings)** — profile info, GPS/offline-map/dark-mode toggles, feedback & support, emergency info, legal.
 
 **Later ideas (not committed, listed for context only):** alternate map layers (elevation), parking search, tour planning, weather forecast, a live Harz status ticker (closures, broken stamp stations), emergency info (current coordinates, phone numbers), selfie-at-station capture, cross-device data transfer.
 
