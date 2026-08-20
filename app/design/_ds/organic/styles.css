@@ -63,6 +63,54 @@
   --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
 }
 
+/* Dark theme — a genuinely separate ramp per role, not a lightness-flip of
+   the light one (each step below is its own authored value). Toggle by
+   setting `data-theme="dark"` on `:root` or a wrapping element; this is a
+   manual theme switch, not a `prefers-color-scheme` mirror — consuming
+   projects wire their own toggle to the attribute. See readme.md. */
+:root[data-theme='dark'] {
+  --color-bg: #221d18;
+  --color-surface: #2b2420;
+  --color-text: #f2e8d8;
+  --color-accent: #e2884f;
+  --color-accent-2: #a3b783;
+  --color-divider: color-mix(in srgb, #f2e8d8 14%, transparent);
+
+  --color-neutral-100: #2f2822;
+  --color-neutral-200: #3a3229;
+  --color-neutral-300: #4d443a;
+  --color-neutral-400: #675c4e;
+  --color-neutral-500: #8a7d6a;
+  --color-neutral-600: #ab9f8a;
+  --color-neutral-700: #c9beac;
+  --color-neutral-800: #e2d9c8;
+  --color-neutral-900: #f5efe2;
+
+  --color-accent-100: #4a2c18;
+  --color-accent-200: #5c3820;
+  --color-accent-300: #7a4b28;
+  --color-accent-400: #a5652f;
+  --color-accent-500: #c67139;
+  --color-accent-600: #d98a52;
+  --color-accent-700: #e8a476;
+  --color-accent-800: #f3c39d;
+  --color-accent-900: #fbe0c8;
+
+  --color-accent-2-100: #2c331f;
+  --color-accent-2-200: #3a4429;
+  --color-accent-2-300: #4e5a37;
+  --color-accent-2-400: #687547;
+  --color-accent-2-500: #7a8a5e;
+  --color-accent-2-600: #96a578;
+  --color-accent-2-700: #b3c093;
+  --color-accent-2-800: #cddab0;
+  --color-accent-2-900: #e6efd2;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
 body {
   background: var(--color-bg);
   color: var(--color-text);

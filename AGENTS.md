@@ -13,11 +13,12 @@ HWN Tracker helps hikers collect stamps for the Harzer Wandernadel — see [ARCH
 ## Key Rules
 
 1. `app/` is not an npm workspace — run `npm install` separately inside `app/`.
-2. No secrets in code. Once real config/credentials exist, they belong in AWS SSM Parameter Store or Lambda environment variables — never hardcoded.
-3. All infrastructure is defined in CDK TypeScript — never create or modify AWS resources via the Console.
-4. Never run `cdk deploy`. Validate infrastructure changes with `npx cdk synth` only — deployment is a manual, deliberate action by the developer.
-5. No TODO comments in committed code — flag it to the developer instead.
-6. Before calling a task done: tests exist for the changed code path, `npx cdk synth --context APP_ENV=dev` still succeeds if `infrastructure/` changed, and no secrets were added.
+2. GitHub issues, PRs, and commit messages are written in English — matches all project docs (ARCHITECTURE.md, AGENTS.md, DESIGN.md). Only the in-app UI copy is German (see `app/DESIGN.md`'s Language & Tone section).
+3. No secrets in code. Once real config/credentials exist, they belong in AWS SSM Parameter Store or Lambda environment variables — never hardcoded.
+4. All infrastructure is defined in CDK TypeScript — never create or modify AWS resources via the Console.
+5. Never run `cdk deploy`. Validate infrastructure changes with `npx cdk synth` only — deployment is a manual, deliberate action by the developer.
+6. No TODO comments in committed code — flag it to the developer instead.
+7. Before calling a task done: tests exist for the changed code path, `npx cdk synth --context APP_ENV=dev` still succeeds if `infrastructure/` changed, and no secrets were added.
 
 ---
 

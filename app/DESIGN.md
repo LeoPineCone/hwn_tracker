@@ -2,7 +2,7 @@
 
 Design tokens and UI conventions for the React Native app (`app/`). Styling is done via NativeWind (`className` props, Tailwind config in `app/tailwind.config.js`) — see [docs/app.md](../docs/app.md) for the code conventions and [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview) for the product this UI serves.
 
-**Status:** the app is still at scaffold stage (one screen, one `Card` component, default Tailwind theme). This document defines the tokens new screens and components should use to match the approved mockups — it is not describing an already-built design system. This is the **only** design doc for the project — there used to be a second one at `docs/design/DESIGN.md`; it's been merged in here and removed so design guidance has one home. Design source material lives alongside it in [`app/design/`](design/): the **Organic** design system (`design/_ds/organic/styles.css` + `theme.json`), the interactive prototype `design/Harzer Wandernadel.dc.html` and its self-contained build `design/stand_alone_app.html` (their inline styles and JS data objects — `NEEDLES`, `ICONS`, `themeVars` — are where several values below, including the full dark-mode ramp, come from), and the static mockups in `design/screenshots/`. If a value here and one of those source files ever disagree, the source file wins — update this doc to match.
+**Status:** the app is still at scaffold stage (one screen, one `Card` component, default Tailwind theme). This document defines the tokens new screens and components should use to match the approved mockups — it is not describing an already-built design system. This is the **only** design doc for the project, so design guidance has one home. Design source material lives alongside it in [`app/design/`](design/): the **Organic** design system (`design/_ds/organic/styles.css` + `theme.json`), the interactive prototype `design/Harzer Wandernadel.dc.html` and its self-contained build `design/stand_alone_app.html` (their inline styles and JS data objects — `NEEDLES`, `ICONS`, `themeVars` — are where several values below, including the full dark-mode ramp, come from), and the static mockups in `design/screenshots/`. If a value here and one of those source files ever disagree, the source file wins — update this doc to match.
 
 ---
 
@@ -13,7 +13,7 @@ The mockups replace the earlier flat/cool scaffold direction with a warm, rounde
 - Generous tap targets, high-contrast text on the cream ground, minimal clutter — the destination, not the decoration.
 - One clear accent for "you did the thing": **sage** (`accent-2`) marks visited stations, earned badges, and reached goals. **Terracotta** (`accent`) marks "open"/actionable — open stations, primary CTAs, the active/default filter.
 - Round, not sharp: `radius-lg` (28px) for sheets and big containers, `radius-md` (16px) for cards and rows, full pill (`999px`) for buttons, chips, and stamp markers. No sharp corners anywhere.
-- Soft elevation instead of pure borders: `shadow-sm/md/lg`, tuned to the warm ground, replace the old "borders-only, no shadows" rule. Borders still appear (dividers, unselected chips) but are no longer the only depth cue.
+- Soft elevation instead of pure borders: `shadow-sm/md/lg`, tuned to the warm ground. Borders still appear (dividers, unselected chips) but are not the only depth cue.
 
 ---
 
@@ -48,7 +48,7 @@ accent-2-700 #56633f   accent-2-800 #3d472b   accent-2-900 #272e1b
 
 ### Dark Mode
 
-Dark mode **is** specified — it's a full second ramp shipped in the prototype (`design/Harzer Wandernadel.dc.html`), not something to invent. Important behavioral detail: in the prototype it's a **manual in-app toggle** ("Dunkler Modus" on the Profil screen, persisted, default off), not an automatic OS-`prefers-color-scheme` switch. `App.tsx` currently derives its `StatusBar` style from `useColorScheme()` alone — that needs to become app-level state (e.g. a settings store) that Profil's toggle writes to and every screen reads, with OS scheme only as the initial default if desired. Don't wire this as a pure `dark:` media-query mirror without a Profil control.
+Dark mode **is** specified — it's a full second ramp, originally shipped in the prototype (`design/Harzer Wandernadel.dc.html`) and now also authored as `:root[data-theme='dark']` in `design/_ds/organic/styles.css`, not something to invent. Important behavioral detail: in the prototype it's a **manual in-app toggle** ("Dunkler Modus" on the Profil screen, persisted, default off), not an automatic OS-`prefers-color-scheme` switch. `App.tsx` currently derives its `StatusBar` style from `useColorScheme()` alone — that needs to become app-level state (e.g. a settings store) that Profil's toggle writes to and every screen reads, with OS scheme only as the initial default if desired. Don't wire this as a pure `dark:` media-query mirror without a Profil control.
 
 ```
 bg #221d18            surface #2b2420          text #f2e8d8
@@ -84,7 +84,7 @@ Not part of the Organic ramps (this is a one-off palette used only for the emerg
 | `error-text` | `#8e2f14` | Text on `error-tint`/`bg` (coordinates, headings in the emergency sheet) |
 | `error-on` | `#fdf1ec` | Text/icon on `error` fill |
 
-The prototype hardcodes these regardless of the dark-mode toggle — no dark variant exists yet for this palette. Flag to the designer before dark mode ships if the emergency screen needs one; don't invent dark values here. Per the old rule, keep this palette **error-only** — never reuse for warnings or neutral emphasis.
+The prototype hardcodes these regardless of the dark-mode toggle — no dark variant exists yet for this palette. Flag to the designer before dark mode ships if the emergency screen needs one; don't invent dark values here. Keep this palette **error-only** — never reuse for warnings or neutral emphasis.
 
 Rules:
 
@@ -181,7 +181,7 @@ Radius — three sizes plus pill, no sharp corners anywhere:
 
 ## Elevation
 
-Soft shadows tuned to the warm ground, not borders-only — this **replaces** the earlier "borders over shadows" rule:
+Soft shadows tuned to the warm ground, not borders-only:
 
 - `shadow-sm` — list/content cards
 - `shadow-md` — icon circles, coin-style badges, floating controls (e.g. the map's recenter button)
@@ -229,7 +229,7 @@ Status label is `"{reqLeft} offen"` while in progress; once earned, always **"Zi
 
 **Card** (existing, `src/components/Card.tsx`) — still the base container, but its current implementation (`border border-black/10`, no fill, no shadow) predates this system and needs updating to `bg-surface rounded-md shadow-sm` (dropping the border-only look) once the token extension above lands.
 
-**Primary button**: `bg-accent` fill, `rounded-full`, `bg`-colored text (cream on the terracotta fill) set in **`font-heading`** at ~15px, weight 400 — confirmed from the prototype's `.btn` CSS (`font-family: var(--font-heading)`) and every CTA in the mockups ("Route", "36 Stempelstellen zeigen", "Speichern", …). This corrects the earlier draft of this doc, which assumed Figtree for buttons — the prototype is unambiguous that buttons use the heading font.
+**Primary button**: `bg-accent` fill, `rounded-full`, `bg`-colored text (cream on the terracotta fill) set in **`font-heading`** at ~15px, weight 400 — confirmed from the prototype's `.btn` CSS (`font-family: var(--font-heading)`) and every CTA in the mockups ("Route", "36 Stempelstellen zeigen", "Speichern", …). The prototype is unambiguous that buttons use the heading font, not the body font.
 
 **Secondary/ghost button**: outline (`border-text/16`) or tinted variant from the accent ramp, same pill shape and `font-heading` label, `text` or `accent-2-900` colored text on the outline variant.
 
@@ -246,7 +246,7 @@ The app's UI copy is German — hiking-warm and direct, not corporate:
 - German, direct, wanderfreundlich-warm. Avoid anglicisms where a German word fits.
 - Decimal numbers use a comma, not a period: `2,4 km`, not `2.4 km`.
 - Status labels are short and active: "Noch 4 Stempel", "Ziel erreicht am …", "X von Y" — not passive/bureaucratic phrasing.
-- Domain terms: a station is `visited` (gestempelt) or `isOpen` (offen) — never "erledigt/fehlt". A collection's earned state reads "Ziel erreicht am {date}" — see Layout Patterns above for the resolved "verliehen" vs. "ziel erreicht" question.
+- Domain terms: a station is `visited` (gestempelt) or `isOpen` (offen) — never "erledigt/fehlt". A collection's earned state reads "Ziel erreicht am {date}" — see Layout Patterns above.
 
 ## No-Gos
 
@@ -259,7 +259,7 @@ The app's UI copy is German — hiking-warm and direct, not corporate:
 
 ## Open Questions — Not Yet Decided
 
-Resolved since the previous revision of this doc: dark mode (now specified, see Dark Mode above), the "verliehen"/"ziel erreicht" copy inconsistency (resolved to "Ziel erreicht am …"), the screen/tab structure (3 tabs, matches [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview)), and badge metal colors (existing ramp steps, see Layout Patterns). What's left:
+Dark mode (see Dark Mode above), the collection-earned copy (`"Ziel erreicht am …"`, see Layout Patterns above), the screen/tab structure (3 tabs, matches [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview)), and badge metal colors (existing ramp steps, see Layout Patterns) are all settled. What's left:
 
 - **Font loading.** Caprasimo (400) + Figtree (400/600/700) are picked — [Caprasimo](https://fonts.google.com/specimen/Caprasimo?preview.script=Latn), [Figtree](https://fonts.google.com/specimen/Figtree?preview.script=Latn) — but not installed. The app is bare React Native (no Expo), so this means downloading the `.ttf` files and linking them (iOS `Info.plist` + Android `assets/fonts`, e.g. via `react-native.config.js` `assets` + `npx react-native-asset`), not `expo-font`. New build step — flag to the developer before adding.
 - **Icon rendering.** The icon *paths* are settled (vendored in the prototype's `ICONS` constant, stroke-width 2.75, Lucide-style — see Layout Patterns), but nothing renders SVG yet: `react-native-svg` isn't installed. New dependency — flag to the developer before adding, even though it's the obvious/only reasonable choice here.

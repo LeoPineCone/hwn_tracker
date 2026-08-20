@@ -2,6 +2,8 @@
 
 Organic is warm, rounded and a little playful: a cream-and-sand ground with a terracotta accent and a sage second accent, Caprasimo display headings over Figtree, 16px radii that grow into pills and soft circular shapes. Photographs are washed so they sit back into the warm page instead of on top of it.
 
+**For the HWN Tracker React Native app (`app/`):** this folder is a generic HTML/CSS export — the markup, CSS classes and "How to use this" instructions below (`<link>`ing `styles.css`, plain-HTML components, `color-mix()`, native `<input>` elements) are web-specific and don't apply to React Native. Only the **token values** (colors, ramps, font names, spacing, radius, shadow numbers) carry over; they're implemented as NativeWind/Tailwind config, not as this CSS file. [`app/DESIGN.md`](../../../DESIGN.md) is the authoritative token reference for the app — read that first, and treat this folder as the source material it was derived from.
+
 ## How to use this
 
 - Link the one stylesheet from every page — `<link rel="stylesheet" href="styles.css">` (adjust the relative path) — and take every color, font, spacing, radius and shadow from its variables (`var(--color-*)`, `var(--font-*)`, `var(--space-*)`, `var(--radius-*)`, `var(--shadow-*)`). Never hard-code a hex, a font name or a px value the tokens already carry.
@@ -16,6 +18,8 @@ Left-aligned, asymmetric layouts. Flush-left headings; content hugs the left edg
 ## Color
 
 A light ground (`--color-bg` #f5ead8) with `--color-text` #201e1d and two accents — `--color-accent` #c67139 and `--color-accent-2` #7a8a5e. Each role carries a 100–900 tonal ramp (`--color-neutral-100` … `--color-accent-2-900`) generated in OKLCH on a shared perceptual lightness scale, so the same step of any ramp has the same visual weight. Use the light steps (100–300) for tinted fills, hovers and subtle borders, 500 as the role's base, and the dark steps (700–900) for text on tinted fills and for pressed states; prefer ramp steps over ad-hoc `color-mix()`. For elevation use `--shadow-sm/md/lg` (already tuned to the ground) rather than ad-hoc box-shadows.
+
+A dark theme ships alongside the light one, set with `:root[data-theme='dark']` in `styles.css` — every role and ramp step is its own authored value, not a computed lightness-flip of the light ramp, so don't hand-roll dark values by inverting the light ones. It's a manual theme switch (set the `data-theme` attribute), not a `prefers-color-scheme` mirror; wire your own toggle to it.
 
 ## Type
 
