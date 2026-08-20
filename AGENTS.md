@@ -26,6 +26,7 @@ HWN Tracker helps hikers collect stamps for the Harzer Wandernadel — see [ARCH
 
 - [Backend](./docs/backend.md) — adding routes, testing, entrypoint conventions
 - [App](./docs/app.md) — React Native structure, conventions, testing
+- [App Data Model](./app/DATA.md) — stations, collections, badge tiers
 - [Infrastructure](./docs/infrastructure.md) — CDK stack conventions, validation
 - [TypeScript Conventions](./docs/typescript.md) — shared by backend & infrastructure
 

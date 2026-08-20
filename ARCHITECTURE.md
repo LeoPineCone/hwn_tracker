@@ -136,7 +136,7 @@ The active environment is selected via the CDK context variable `APP_ENV` (`cdk 
 
 These were out of scope for the initial scaffold and should be revisited as the real feature set (see [Product Overview](#product-overview)) gets built:
 
-- **On-device data storage** for the bundled station/collection/badge dataset and local stamp-collection state (SQLite? a bundled JSON/asset store? something else) — must fit the [offline-first invariant](#architecture-invariant-offline-first).
+- **On-device data storage** for the bundled station/collection/badge dataset and local stamp-collection state (SQLite? a bundled JSON/asset store? something else) — must fit the [offline-first invariant](#architecture-invariant-offline-first). The shape of that dataset is now specified in [`app/DATA.md`](./app/DATA.md); make this decision against that spec.
 - **How official station/collection/badge data is authored, versioned, and shipped** inside app releases without a backend round-trip.
 - **Cross-device data transfer** (e.g. phone upgrade) — later feature, mechanism not yet decided; likely the first real reason the backend grows beyond a health check.
 - **Authentication/authorization** — likely app-store purchase/entitlement rather than traditional accounts, given the offline-first, mostly-backend-less design; not yet decided.

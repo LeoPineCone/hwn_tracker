@@ -40,8 +40,8 @@ be loaded. Those exclusions are deliberate; see Decision Log.
 - [x] Milestone 3: Completion rules and badge tiers as a kind of collection. (2026-08-20)
 - [x] Milestone 4, step 1 of 2: Entity Relationships, Worked Example, and Open Questions sections
       added to `app/DATA.md`, closing out the document's content. (2026-08-20)
-- [ ] Milestone 4, step 2 of 2: cross-links added from `ARCHITECTURE.md`, `AGENTS.md`,
-      `docs/app.md`, and `app/DESIGN.md`.
+- [x] Milestone 4, step 2 of 2: cross-links added from `ARCHITECTURE.md`, `AGENTS.md`,
+      `docs/app.md`, and `app/DESIGN.md`. (2026-08-20)
 - [ ] ExecPlan finalized: Outcomes & Retrospective written, plan moved from
       `docs/exec-plans/active/` to `docs/exec-plans/completed/`.
 
@@ -302,6 +302,17 @@ each one changes what `app/DATA.md` must say, so the executor must preserve them
   coincidence, not because the prototype derives them. `app/DATA.md`'s Worked Example section
   records this as a concrete illustration of why "Counts are derived, not stored" matters.
   Independently re-verified by the executor via `grep -n` against lines 716–725.
+
+- Observation: The finished `app/DATA.md` carries 18 occurrences of the three bold confidence
+  markers (3 convention definitions + 15 field-table rows: 8 in Station, 5 in Collection, 2 in
+  Completion Rules and Badges), not the "at least 20" the plan's Concrete Steps section estimated
+  once all three entity tables were present. This is not a defect: the formal Validation and
+  Acceptance section's actual requirement — "every row of every field table carries exactly one
+  of Confirmed/Assumed/Missing, no unmarked rows" — is satisfied exactly (verified by counting
+  field-table rows against the marker count, which match 1:1). The "at least 20" figure was an
+  estimate made before the exact table shapes were drafted (e.g. "Member stations" ended up as
+  one relationship row rather than several field rows); the lower actual count reflects that the
+  content came out slightly more compact than estimated, not that any row is missing a marker.
 
 - Decision: The Code-Quality Gate is skipped for every milestone's Commit Gate in this plan.
   Rationale: this entire ExecPlan is documentation-only, as stated in its own Purpose section —

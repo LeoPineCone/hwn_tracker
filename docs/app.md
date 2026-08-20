@@ -6,7 +6,7 @@ React Native app in `app/` — own toolchain, not an npm workspace (run `npm ins
 - `src/screens/` — one file per screen
 - `src/components/` — reusable UI
 - `src/services/` — backend API calls; screens/components must go through here, never fetch directly
-- `src/models/` — TypeScript interfaces for backend payloads
+- `src/models/` — TypeScript interfaces for backend payloads; domain entities (stations, collections, badge tiers) are specified in `../app/DATA.md`
 - `src/config.ts` — handles the Android-emulator-vs-iOS-simulator localhost difference; don't hardcode a host elsewhere
 
 ## Conventions
