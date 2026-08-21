@@ -105,6 +105,8 @@ Token flow (app never ships a long-lived Mapbox token):
 
 Offline: the app downloads the Harz region as a Mapbox offline pack on demand (triggered by the Profil screen's offline-map toggle), rather than every install shipping tiles baked into the build — see the [offline-first invariant](#architecture-invariant-offline-first) for the default-remote/opt-in-offline split this implies.
 
+**Mapbox secret-token storage:** the Mapbox secret token (`tokens:write` scope) lives in **AWS Systems Manager Parameter Store** (as a `SecureString`) in deployed environments, read by the Lambda at runtime. Locally, `backend/local/server.ts` reads it from a `.env` file instead (already covered by the repo's `.env` gitignore rule) — no SSM call needed for local dev.
+
 ---
 
 ## App ↔ Backend connectivity (local development)
@@ -145,6 +147,7 @@ The active environment is selected via the CDK context variable `APP_ENV` (`cdk 
 | Backend exposure | Lambda Function URL | API Gateway (HTTP API) | Minimal infra for a single-service backend. No stages/custom-domain/throttling requirement yet. |
 | Lambda runtime | Node.js 24.x | Node.js 20.x | 20.x is already in its CloudFormation deprecation window; 24.x is current LTS at time of writing. |
 | Map rendering & tile provider | Mapbox (`@rnmapbox/maps`), remote-loaded by default with opt-in offline download | Self-baked MapLibre tiles bundled at build time (originally recommended, see [#2](https://github.com/LeoPineCone/hwn_tracker/issues/2)) | Fastest to start with, covers every required feature, free tier large enough for this app. Accepted trade-off: map tiles are the one region-bound asset that isn't bundled by default, and the backend now mints short-lived tokens instead of staying health-check-only. |
+| Mapbox secret-token storage | AWS Systems Manager Parameter Store (SecureString) in deployed environments; a local `.env` file for local dev | AWS Secrets Manager | SSM Parameter Store covers a single secret value with no rotation/versioning need yet; cheaper and simpler than Secrets Manager at this scale. Revisit if secret rotation becomes a requirement. |
 
 ---
 
@@ -156,6 +159,5 @@ These were out of scope for the initial scaffold and should be revisited as the 
 - **How official station/collection/badge data is authored, versioned, and shipped** inside app releases without a backend round-trip.
 - **Cross-device data transfer** (e.g. phone upgrade) — later feature, mechanism not yet decided; likely the next reason the backend grows beyond token minting.
 - **Authentication/authorization** — likely app-store purchase/entitlement rather than traditional accounts, given the offline-first, mostly-backend-less design; not yet decided. Separately, and more urgently: **app-authenticity verification for Mapbox token requests** — how the backend confirms a token request genuinely comes from the app itself (candidates: iOS App Attest / Android Play Integrity, a build-embedded signing secret, or something lighter-weight for MVP) needs a decision before the token-minting endpoint (see [Map rendering / offline tiles](#map-rendering--offline-tiles-mapbox)) is built.
-- **Mapbox secret-token storage** — where the server-side Mapbox secret token (`tokens:write` scope) lives (AWS Secrets Manager, CDK-provided environment variable, etc.).
 - CI/CD deploy automation (CI currently only runs tests + `cdk synth`, it never deploys).
 - Observability (logging format, error tracking, alarms) — low priority while the backend surface stays minimal.
