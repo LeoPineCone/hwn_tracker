@@ -94,7 +94,9 @@ Rules:
 - **Open/not-yet-visited stations** use `neutral` + dashed borders, not a color of their own — matches the existing "don't invent a third status color" principle.
 - The `divider` token is opacity-based (`text` at 16%), same convention `Card.tsx` already uses (`border-black/10`) — keep using the `/opacity` suffix rather than a separate hex.
 
-### Tailwind implementation (target — not yet applied to `tailwind.config.js`)
+### Tailwind implementation
+
+The light ramp below is applied: the values live in `app/src/theme/colors.json`, which `app/tailwind.config.js` requires (`colors: require('./src/theme/colors.json')`) so components can read the same hex values where a `className` won't do (e.g. SVG strokes).
 
 ```js
 // app/tailwind.config.js — theme.extend
@@ -195,7 +197,7 @@ Borders remain for dividers and unselected/outline states (`border-text/16`, i.e
 
 These come directly from the mockups (`design/screenshots/`) and the interactive prototype (`design/Harzer Wandernadel.dc.html`) — see Language & Tone below for the German domain vocabulary and copy rules.
 
-**Tab bar** — 3 tabs, matching [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview)'s MVP scope: **Karte** (map, includes a "Stempel" grid toggle in-screen), **Erfolge** (badge/collection progress), **Profil** (account + settings). Active tab: icon on a `rounded-full` `accent-2-200`-ish tint pill; inactive: plain `neutral-600` icon + label, no fill. Icons are Lucide-style, stroke-width **2.75**, `stroke-linecap: round`, and the exact path data is already vendored in the prototype's `ICONS` constant (`design/Harzer Wandernadel.dc.html`) — copy those paths rather than re-drawing icons from scratch. Rendering them needs `react-native-svg`, not yet installed — see Open Questions.
+**Tab bar** — 3 tabs, matching [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview)'s MVP scope: **Karte** (map, includes a "Stempel" grid toggle in-screen), **Erfolge** (badge/collection progress), **Profil** (account + settings). Active tab: icon *and* label together sit on a `rounded-md` (16px) `accent-2-200`-ish tint pill spanning the tab's full width, not just the icon — confirmed against `app/design/Harzer Wandernadel.dc.html` line 398's `border-radius:var(--radius-md)` and the mockups; inactive: plain `neutral-600` icon + label, no fill. Icons are Lucide-style, stroke-width **2.75**, `stroke-linecap: round`, and the exact path data is already vendored in the prototype's `ICONS` constant (`design/Harzer Wandernadel.dc.html`) — copy those paths rather than re-drawing icons from scratch. Rendering them uses `react-native-svg`, installed and wired up in `app/src/components/Icon.tsx`.
 
 **Segmented control** (Karte/Stempel toggle) — pill track (`surface`, `rounded-full`), active segment `bg-bg` (or `surface`) fill, inactive transparent.
 
@@ -259,10 +261,9 @@ The app's UI copy is German — hiking-warm and direct, not corporate:
 
 ## Open Questions — Not Yet Decided
 
-Dark mode (see Dark Mode above), the collection-earned copy (`"Ziel erreicht am …"`, see Layout Patterns above), the screen/tab structure (3 tabs, matches [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview)), and badge metal colors (existing ramp steps, see Layout Patterns) are all settled. What's left:
+Dark mode (see Dark Mode above), the collection-earned copy (`"Ziel erreicht am …"`, see Layout Patterns above), the screen/tab structure (3 tabs, matches [ARCHITECTURE.md](../ARCHITECTURE.md#product-overview)), badge metal colors (existing ramp steps, see Layout Patterns), and icon rendering (`react-native-svg` is installed; `app/src/components/Icon.tsx` renders the vendored paths) are all settled. What's left:
 
 - **Font loading.** Caprasimo (400) + Figtree (400/600/700) are picked — [Caprasimo](https://fonts.google.com/specimen/Caprasimo?preview.script=Latn), [Figtree](https://fonts.google.com/specimen/Figtree?preview.script=Latn) — but not installed. The app is bare React Native (no Expo), so this means downloading the `.ttf` files and linking them (iOS `Info.plist` + Android `assets/fonts`, e.g. via `react-native.config.js` `assets` + `npx react-native-asset`), not `expo-font`. New build step — flag to the developer before adding.
-- **Icon rendering.** The icon *paths* are settled (vendored in the prototype's `ICONS` constant, stroke-width 2.75, Lucide-style — see Layout Patterns), but nothing renders SVG yet: `react-native-svg` isn't installed. New dependency — flag to the developer before adding, even though it's the obvious/only reasonable choice here.
 - **Map rendering library.** Still not chosen (no `react-native-maps` or similar). Independent of these tokens but blocks the Karte screen — see the existing note in [ARCHITECTURE.md](../ARCHITECTURE.md#architecture-invariant-offline-first).
 - **Dark-mode theming mechanism.** *Which* dark values to use is settled (see Dark Mode above); *how* to wire runtime theme switching in NativeWind (`vars()` vs. per-key `dark:` duplication vs. something else) still needs a spike — see the implementation note under Tailwind implementation.
 - **Error palette has no dark-mode variant.** The prototype hardcodes the emergency-info colors regardless of the dark-mode toggle — flag to the designer if that screen needs one before dark mode ships.

@@ -78,6 +78,8 @@ Screens live in `app/src/screens/`, reusable UI in `app/src/components/`. Stylin
 
 **Architecture invariant:** `react-native-reanimated` is excluded from native autolinking on both platforms (see `app/react-native.config.js`). It's pulled in transitively as a static require target for NativeWind's own animation code paths, not used directly by the app, and its native side isn't yet compatible with the `react-native-worklets` version RN 0.87 requires — so it stays JS-resolvable only. Revisit once a compatible reanimated release ships or the app actually needs animation utilities.
 
+The app's three MVP screens sit behind a hand-rolled tab shell in `app/src/navigation/TabNavigator.tsx`, with a presentational `app/src/components/TabBar.tsx`; no navigation library is installed. All three screens stay mounted so per-screen state survives tab switches. `TabBar` is intentionally shaped so it could be dropped into React Navigation's `tabBar` prop later without rewriting it, if a navigation library is ever adopted.
+
 ---
 
 ## Backend
@@ -148,6 +150,7 @@ The active environment is selected via the CDK context variable `APP_ENV` (`cdk 
 | Lambda runtime | Node.js 24.x | Node.js 20.x | 20.x is already in its CloudFormation deprecation window; 24.x is current LTS at time of writing. |
 | Map rendering & tile provider | Mapbox (`@rnmapbox/maps`), remote-loaded by default with opt-in offline download | Self-baked MapLibre tiles bundled at build time (originally recommended, see [#2](https://github.com/LeoPineCone/hwn_tracker/issues/2)) | Fastest to start with, covers every required feature, free tier large enough for this app. Accepted trade-off: map tiles are the one region-bound asset that isn't bundled by default, and the backend now mints short-lived tokens instead of staying health-check-only. |
 | Mapbox secret-token storage | AWS Systems Manager Parameter Store (SecureString) in deployed environments; a local `.env` file for local dev | AWS Secrets Manager | SSM Parameter Store covers a single secret value with no rotation/versioning need yet; cheaper and simpler than Secrets Manager at this scale. Revisit if secret rotation becomes a requirement. |
+| App navigation | Custom tab shell (no navigation library) | React Navigation (`@react-navigation/bottom-tabs` + `react-native-screens`) | A fully custom tab bar is required by the design anyway, deep linking and tab-state persistence are out of MVP scope, and there is no stack/modal routing anywhere in the MVP. RN 0.87 already forced one native-module autolinking carve-out (reanimated), so a second native dependency for a three-way enum was judged a poor trade. Revisit if a pushed detail route needing hardware-back handling, or deep linking, is ever required. |
 
 ---
 
