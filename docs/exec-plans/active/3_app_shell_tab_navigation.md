@@ -39,8 +39,14 @@ mode. Those exclusions are deliberate; see the Decision Log.
       prototype paths. `app/__tests__/Icon.test.tsx` passes (3 tests); full app suite
       `Test Suites: 2 passed, 2 total` / `Tests: 4 passed, 4 total`; lint 0 errors + 1 pre-existing
       warning; `tsc --noEmit` 1 pre-existing error, unchanged.
-- [ ] Milestone 2: `TabBar`, `TabNavigator`, and the three tab screens; `app/App.tsx` rewired; the
-      tab bar visible and switchable in a running app.
+- [x] Milestone 2 (2026-08-21, executor): `TabBar`, `TabNavigator`, and the three tab screens;
+      `app/App.tsx` rewired to `SafeAreaProvider` → `StatusBar` → `TabNavigator`;
+      `app/src/screens/HomeScreen.tsx` deleted (no remaining references). Full suite
+      `Test Suites: 3 passed, 3 total` / `Tests: 8 passed, 8 total`; lint 0 errors + 1
+      pre-existing warning; `tsc --noEmit` 1 pre-existing error, unchanged. Manual iOS/Android
+      simulator run could not be performed in this execution environment (no simulator/CocoaPods
+      available — see Surprises & Discoveries); code-level acceptance is fully verified but the
+      visual/manual acceptance step of Milestone 2 is deferred to the developer.
 - [ ] Milestone 3: the Karte screen's Karte/Stempel segmented control, and proof that its selection
       survives a tab round trip.
 - [ ] Milestone 4: documentation reconciled (`app/DESIGN.md`, `ARCHITECTURE.md`, `docs/app.md`) and
@@ -127,6 +133,27 @@ plan did not anticipate belongs here with its evidence.
 - Milestone 1 (2026-08-21): `app/jest.config.js`'s existing `transformIgnorePatterns` allowlist
   already handled `react-native-svg` without modification — no edit to that file was needed, and
   the Step 5 contingency (adding `react-native-svg` to the regex) did not apply.
+- Milestone 2 (2026-08-21): `react-native-safe-area-context`'s `SafeAreaProvider` does not render
+  its children under plain `react-test-renderer` without a manual mock — without layout-derived
+  insets it renders `children: null`, so every `testID` lookup inside the tree returned nothing and
+  all four new tests failed with "Cannot read properties of undefined". Fixed with a new file,
+  `app/__mocks__/react-native-safe-area-context.js`, which re-exports the package's own official
+  jest mock (`react-native-safe-area-context/jest/mock`) flattened onto `module.exports` for CJS/ESM
+  interop. This file was not anticipated by the plan's file list in Interfaces and Dependencies;
+  it is a test-only shim, added because the plan's manual-mock convention (Jest's node_modules
+  mock directory) picks it up automatically with no `jest.config.js` change required.
+- Milestone 2 (2026-08-21): the `style={{ display: ... }}` toggle on `TabNavigator`'s tab-slot
+  wrapper (mandated by the Decision Log to keep screens mounted) trips
+  `react-native/no-inline-styles` and would have raised lint from 1 to 2 warnings. Suppressed with
+  a targeted `eslint-disable-next-line` plus an inline comment explaining it is an intentional,
+  documented exception (a layout toggle, not a design token) — not anticipated by the plan text but
+  consistent with its own reasoning in the Decision Log.
+- Milestone 2 (2026-08-21): manual simulator/emulator acceptance (`npm run ios` / `npm run android`)
+  could not be run in this execution environment — no iOS simulator and no working CocoaPods
+  install (consistent with Milestone 1's `pod install` failure). All automated acceptance (tests,
+  lint, tsc) passed; the visual walkthrough against `screen_map_v1.png` / `screen_rewards_v1.png`
+  described in the plan's Milestone 2 acceptance section has not been performed and is left for the
+  developer to confirm on a real device/simulator before merging or releasing.
 
 ## Decision Log
 
