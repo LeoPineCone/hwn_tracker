@@ -5,7 +5,13 @@
 Each ExecPlan is a single Markdown file. When the file content is only the ExecPlan, omit
 wrapping triple backticks. If embedding an ExecPlan inside another document, use a single
 fenced code block labeled `md`. Do not nest additional triple-backtick code fences inside; use
-indented blocks for commands, transcripts, diffs, or code. Use two newlines after every heading.
+indented blocks for commands, transcripts, diffs, or short illustrative code fragments. Use two
+newlines after every heading.
+
+Indented code blocks are for commands, expected output, diffs, and verbatim data (see "Specify
+Contracts, Not Implementations" in WRITING_GUIDELINES.md) — not for full component or test file
+bodies. If an indented block is reproducing a whole file's implementation rather than a
+signature, a config value, or vendored data, it belongs in the executor's work, not the plan.
 
 ## Milestones
 

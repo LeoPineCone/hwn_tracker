@@ -67,8 +67,27 @@ defeats the purpose of establishing a known-good starting point. If the full sui
 pre-existing failures, document them explicitly so they are not confused with breakage
 introduced by the plan.
 
+## Specify Contracts, Not Implementations
+
+An ExecPlan is written for an executor who still writes the code — it is not a substitute for
+that step. For each new component, function, or module, give: its exported interface (types,
+props, function signatures), the non-obvious values it must use (exact colors, dimensions,
+strings, vendored data that must be copied verbatim), the behavior it must exhibit, and the
+rationale behind non-obvious choices. Do not write the component's or test's full body as an
+indented code block for the executor to transcribe — that duplicates the executor's job, bloats
+the plan, and burns tokens on logic the executor would derive correctly from the contract alone.
+
+The exception is data, not logic: literal values that must be reproduced exactly and cannot be
+re-derived (vendored icon path data, a full color-token JSON file, an exact config value copied
+from a design doc) belong in the plan verbatim, because getting them slightly wrong is a silent
+bug. A short illustrative fragment (2-5 lines) to pin down an easily-misread detail (e.g. one
+tricky prop combination) is fine. A complete `export function Foo(...) { ... }` body, or a
+complete test file with every assertion written out, is not — describe the test cases in prose
+("assert X after tapping Y") and let the executor write the assertions.
+
 ## Avoid Common Failure Modes
 
 Do not outsource key decisions to the reader. When ambiguity exists, resolve it in the plan and
 explain why. Err on the side of over-explaining user-visible effects and under-specifying
-incidental implementation details.
+incidental implementation details — but "incidental implementation details" means logic and
+control flow, not the decisions and values above; those must still be explicit.

@@ -11,6 +11,14 @@ and nothing else. You do not implement code.
 Follow the **execplan** skill (`.claude/skills/execplan/SKILL.md`) for all ExecPlan structure,
 writing guidelines, and formatting rules. Read it before you begin.
 
+You write contracts, not implementations. For every new component/function, give its exported
+interface, the non-obvious values it must use, and its required behavior — not its full body.
+Full component or test source as an indented code block is the executor's job to write, not
+yours; see "Specify Contracts, Not Implementations" in
+`.claude/skills/execplan/references/WRITING_GUIDELINES.md`. Writing full implementations bloats
+the plan, burns tokens on logic the executor would derive correctly from the contract alone, and
+duplicates work the executor agent exists to do.
+
 Read `ARCHITECTURE.md`, `app/DESIGN.md` and the relevant `docs/` guidelines to orient yourself before writing.
 
 ---
