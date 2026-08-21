@@ -23,8 +23,9 @@ HWN Tracker helps hikers collect stamps ("Stempel") for the **Harzer Wandernadel
 
 Large parts of the Harz have no reliable cell coverage, so the app must work fully offline in the field — this is a hard product requirement, not an optimization, and it constrains implementation choices across the app:
 
-- **Region-bound assets are bundled into the app, not fetched at runtime.** The Harz is a fixed, bounded coordinate area, so map tiles and the station/collection/badge dataset ship inside the app build rather than being downloaded on demand. The only currently-envisioned exception is the v2 status ticker.
-- **Backend communication is minimized by design.** The current backend (health-check only) is a leftover of the initial scaffold, not a preview of the target shape — expect MVP functionality (map, stamps, badges) to run entirely against local, on-device data. Network calls are reserved for things that genuinely need a server, e.g. the later cross-device data transfer feature.
+- **Region-bound app data is bundled into the app, not fetched at runtime.** The Harz is a fixed, bounded coordinate area, so the station/collection/badge dataset ships inside the app build rather than being downloaded on demand. The only currently-envisioned exception is the v2 status ticker.
+- **Map tiles default to remote-loaded, with offline as an explicit download.** Unlike the rest of the region-bound data, map tiles are fetched from the chosen map provider ([Mapbox](#map-rendering--offline-tiles-mapbox)) at runtime by default, not baked into the app build. Offline map use is opt-in: the Profil screen's offline-map toggle triggers downloading the Harz region as an offline pack. This is a deliberate exception to the "bundle, don't fetch" rule above — see [Decision Log](#decision-log).
+- **Backend communication is minimized by design, with one exception: map tile access tokens.** The backend now does more than a health check — it mints short-lived Mapbox tokens for the app (see [Map rendering / offline tiles](#map-rendering--offline-tiles-mapbox)). Beyond that, expect MVP functionality (stamps, badges, station browsing) to run entirely against local, on-device data. Network calls are reserved for things that genuinely need a server, e.g. token minting and the later cross-device data transfer feature.
 
 Treat this as a standing constraint on data-storage, sync, and backend-scope decisions — see [Open Questions](#open-questions--not-yet-decided).
 
@@ -92,6 +93,20 @@ The Lambda is exposed via a **Function URL** (not API Gateway). For a single-ser
 
 ---
 
+## Map rendering / offline tiles (Mapbox)
+
+**Chosen provider: Mapbox** (`@rnmapbox/maps`), decided in [#2](https://github.com/LeoPineCone/hwn_tracker/issues/2) over a self-baked-MapLibre-tiles alternative — fastest to get started with, supports every feature the Karte screen needs (offline regions, custom styling, a region fixed to the Harz), and has a free tier (~50k map loads/month) generous enough for a small/independent app.
+
+Token flow (app never ships a long-lived Mapbox token):
+1. The app requests a short-lived (~1–2h) scoped token from the backend.
+2. The backend verifies the request genuinely originates from the app itself before issuing anything — exact mechanism not yet decided, see [Open Questions](#open-questions--not-yet-decided).
+3. The backend mints a temporary/scoped token via Mapbox's Tokens API, using a Mapbox secret token (`tokens:write` scope) held server-side, and returns it to the app.
+4. The app uses that token to pull tiles directly from Mapbox until it expires, then repeats the flow.
+
+Offline: the app downloads the Harz region as a Mapbox offline pack on demand (triggered by the Profil screen's offline-map toggle), rather than every install shipping tiles baked into the build — see the [offline-first invariant](#architecture-invariant-offline-first) for the default-remote/opt-in-offline split this implies.
+
+---
+
 ## App ↔ Backend connectivity (local development)
 
 The Android emulator cannot reach the host machine via `localhost` — it uses the documented alias `10.0.2.2`. The iOS Simulator shares the host network directly, so `localhost` works there. This is handled in `app/src/config.ts` via `Platform.select`. When the backend is deployed, point `API_BASE_URL` at the Lambda Function URL instead (see [Environments](#environments)).
@@ -129,6 +144,7 @@ The active environment is selected via the CDK context variable `APP_ENV` (`cdk 
 | Backend architecture | Single Express app via `serverless-http` | Per-route Lambda functions | Requested pattern; also simplest to run identically local vs. deployed, and avoids N separate bundles/cold starts for a small API surface. |
 | Backend exposure | Lambda Function URL | API Gateway (HTTP API) | Minimal infra for a single-service backend. No stages/custom-domain/throttling requirement yet. |
 | Lambda runtime | Node.js 24.x | Node.js 20.x | 20.x is already in its CloudFormation deprecation window; 24.x is current LTS at time of writing. |
+| Map rendering & tile provider | Mapbox (`@rnmapbox/maps`), remote-loaded by default with opt-in offline download | Self-baked MapLibre tiles bundled at build time (originally recommended, see [#2](https://github.com/LeoPineCone/hwn_tracker/issues/2)) | Fastest to start with, covers every required feature, free tier large enough for this app. Accepted trade-off: map tiles are the one region-bound asset that isn't bundled by default, and the backend now mints short-lived tokens instead of staying health-check-only. |
 
 ---
 
@@ -138,7 +154,8 @@ These were out of scope for the initial scaffold and should be revisited as the 
 
 - **On-device data storage** for the bundled station/collection/badge dataset and local stamp-collection state (SQLite? a bundled JSON/asset store? something else) — must fit the [offline-first invariant](#architecture-invariant-offline-first). The shape of that dataset is now specified in [`app/DATA.md`](./app/DATA.md); make this decision against that spec.
 - **How official station/collection/badge data is authored, versioned, and shipped** inside app releases without a backend round-trip.
-- **Cross-device data transfer** (e.g. phone upgrade) — later feature, mechanism not yet decided; likely the first real reason the backend grows beyond a health check.
-- **Authentication/authorization** — likely app-store purchase/entitlement rather than traditional accounts, given the offline-first, mostly-backend-less design; not yet decided.
+- **Cross-device data transfer** (e.g. phone upgrade) — later feature, mechanism not yet decided; likely the next reason the backend grows beyond token minting.
+- **Authentication/authorization** — likely app-store purchase/entitlement rather than traditional accounts, given the offline-first, mostly-backend-less design; not yet decided. Separately, and more urgently: **app-authenticity verification for Mapbox token requests** — how the backend confirms a token request genuinely comes from the app itself (candidates: iOS App Attest / Android Play Integrity, a build-embedded signing secret, or something lighter-weight for MVP) needs a decision before the token-minting endpoint (see [Map rendering / offline tiles](#map-rendering--offline-tiles-mapbox)) is built.
+- **Mapbox secret-token storage** — where the server-side Mapbox secret token (`tokens:write` scope) lives (AWS Secrets Manager, CDK-provided environment variable, etc.).
 - CI/CD deploy automation (CI currently only runs tests + `cdk synth`, it never deploys).
 - Observability (logging format, error tracking, alarms) — low priority while the backend surface stays minimal.
