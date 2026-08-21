@@ -335,6 +335,40 @@ plan did not anticipate belongs here with its evidence.
   tests to NativeWind internals. `accessibilityState.selected` is a stable, semantic contract.
   Date/Author: 2026-08-21, planner.
 
+## Post-completion fix (2026-08-21, executor)
+
+The developer ran the app on real iOS and Android simulators after this plan's four commits
+landed (something the execution environment could not do — see the deviation below) and reported
+the Karte screen's top area looked wrong: the segmented control pill showed, but the cream `bg-bg`
+background did not reach the rest of the screen (plain white instead), and the `ScreenShell`
+kicker/title text was not visibly occupying space above it. Screenshot evidence:
+`app/design/actual_screenshots/issue_3_1.png`.
+
+Root cause: `app/src/navigation/TabNavigator.tsx`'s per-tab wrapper `<View>` (the one carrying
+`testID={`tabslot-${id}`}` and the `style={{ display: ... }}` visibility toggle) had no
+`className="flex-1"`. React Native's Yoga layout engine only stretches a `flex-1` descendant if
+every ancestor in the chain also has `flex: 1` (or an otherwise defined size); this one missing
+link broke the chain between the `SafeAreaView`/`<View className="flex-1">` pair above it and
+`ScreenShell`'s own `flex-1 bg-bg` below it, so the screen content collapsed to its natural content
+height instead of filling the space above the tab bar — explaining both symptoms at once (the
+cream background not reaching the bottom, and the layout looking squashed at the top). Fixed by
+adding `className="flex-1"` to that wrapper View (one-line change, verified with the full
+`app/npm test` / `npm run lint` / `npx tsc --noEmit` suite — no regressions, no new warnings/errors).
+Committed separately from the four milestone commits, referencing issue #3.
+
+This was not caught by the automated test suite because `TabNavigation.test.tsx` only asserts on
+`accessibilityState.selected` and `style.display` — neither of which depends on `className`
+resolution or actual layout geometry — and `react-test-renderer` does not perform real Yoga layout,
+so a missing `flex-1` produces no test-visible symptom. It also could not be caught by this plan's
+own acceptance sweep because the execution environment had no iOS simulator, Android emulator, or
+working CocoaPods install (see the Milestone 1/2 Surprises & Discoveries and the deviation noted
+below) — the manual visual walkthrough the plan calls "the real acceptance" for Milestones 2 and 3
+was never performed until the developer ran it themselves post-completion. Lesson for future
+ExecPlans: a hand-rolled flex-based visibility toggle (any `display`-prop-based show/hide wrapper)
+needs an explicit test asserting rendered geometry/behavior beyond prop presence, or an explicit
+manual-acceptance gate that cannot be marked done without a screenshot, when the executing agent
+cannot run the target platform itself.
+
 ## Outcomes & Retrospective
 
 All four milestones landed as planned, in four commits (`9c63097` tokens/Icon,

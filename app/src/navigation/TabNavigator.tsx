@@ -26,6 +26,7 @@ export function TabNavigator(): React.JSX.Element {
           return (
             <View
               key={id}
+              className="flex-1"
               testID={`tabslot-${id}`}
               // Layout visibility toggle, not a design token — screens must
               // stay mounted (not conditionally rendered) so their internal
