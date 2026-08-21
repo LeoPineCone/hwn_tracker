@@ -47,8 +47,16 @@ mode. Those exclusions are deliberate; see the Decision Log.
       simulator run could not be performed in this execution environment (no simulator/CocoaPods
       available — see Surprises & Discoveries); code-level acceptance is fully verified but the
       visual/manual acceptance step of Milestone 2 is deferred to the developer.
-- [ ] Milestone 3: the Karte screen's Karte/Stempel segmented control, and proof that its selection
-      survives a tab round trip.
+- [x] Milestone 3 (2026-08-21, executor): the Karte screen's Karte/Stempel segmented control
+      (`app/src/components/SegmentedControl.tsx`), and a test proving its selection survives a tab
+      round trip. Full suite `Test Suites: 3 passed, 3 total` / `Tests: 10 passed, 10 total`; lint
+      0 errors + 1 pre-existing warning; `tsc --noEmit` 1 pre-existing error, unchanged. As noted in
+      the Decision Log, the segment half of acceptance criterion three is demonstrated concretely;
+      the status-filter half is out of scope (issue #5). Manual simulator confirmation of the
+      "Stempel stays selected after Erfolge → Karte" behaviour is deferred to the developer for the
+      same environment reason as Milestone 2 (no simulator/CocoaPods available here); the automated
+      test is written to fail against a conditional-rendering implementation, per the plan's
+      requirement.
 - [ ] Milestone 4: documentation reconciled (`app/DESIGN.md`, `ARCHITECTURE.md`, `docs/app.md`) and
       the full acceptance sweep run.
 - [ ] ExecPlan finalized: Outcomes & Retrospective written, plan moved from
@@ -285,6 +293,24 @@ plan did not anticipate belongs here with its evidence.
   gain). (b) The three test colors are arbitrary examples chosen to prove generic prop pass-through,
   not palette correctness — importing them from `colors.json` would add coupling without adding
   signal to what the test verifies.
+  Date/Author: 2026-08-21, executor.
+
+- Decision: Milestone 3's code-quality review flagged `SegmentedControl.tsx`'s
+  `SEGMENT_ACTIVE`/`LABEL_ACTIVE`/`LABEL_INACTIVE` constants (built as
+  `` `${BASE} literal-class}` `` template literals) as SHOULD FIX, on the premise that NativeWind's
+  scanner "only sees literal strings" and template interpolation would break it. Overridden without
+  a fix round: Tailwind/NativeWind's content scanner does a raw-text regex extraction over file
+  source, not AST/runtime evaluation, so a literal substring such as `bg-bg` inside
+  `` `${SEGMENT_BASE} bg-bg}` `` is still found — the scanner has no concept of template-literal
+  boundaries, it just greps for class-shaped tokens. This is the identical pattern already applied
+  to `TabBar.tsx` in Milestone 2 (see its own commit), verified there by a passing `npm test` run
+  against the real rendered tree. "Never assemble a class name from fragments" (the real
+  constraint, restated in the Plan of Work) means never building a class name from a *runtime
+  variable* (e.g. `` `bg-${tone}-200` `` where `tone` is not a compile-time-known literal) — it does
+  not forbid string-constant concatenation where every class name is still a literal substring
+  somewhere in the file. Reverting to fully duplicated literal strings per the reviewer's request
+  would only reintroduce the exact duplication Milestone 2's own review asked to remove, for no
+  scanner-safety benefit.
   Date/Author: 2026-08-21, executor.
 
 - Decision: Active state is expressed through **accessibility props** —

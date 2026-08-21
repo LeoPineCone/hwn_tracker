@@ -69,3 +69,26 @@ test('tapping back to Karte restores it', async () => {
   expect(node(tree, 'tab-karte').props.accessibilityState.selected).toBe(true);
   expect(node(tree, 'tabslot-karte').props.style.display).toBe('flex');
 });
+
+test('segmented control defaults to Karte', async () => {
+  const tree = await createApp();
+
+  expect(node(tree, 'karte-segment-karte').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'karte-segment-stempel').props.accessibilityState.selected).toBe(false);
+  expect(node(tree, 'karte-view-readout').props.children).toBe('Kartenansicht kommt bald.');
+});
+
+test('segmented control selection survives a tab round trip', async () => {
+  const tree = await createApp();
+
+  await press(tree, 'karte-segment-stempel');
+
+  expect(node(tree, 'karte-segment-stempel').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'karte-view-readout').props.children).toBe('Stempelansicht kommt bald.');
+
+  await press(tree, 'tab-erfolge');
+  await press(tree, 'tab-karte');
+
+  expect(node(tree, 'karte-segment-stempel').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'karte-view-readout').props.children).toBe('Stempelansicht kommt bald.');
+});
