@@ -14,6 +14,7 @@ HWN Tracker helps hikers collect stamps for the Harzer Wandernadel — see [ARCH
 
 1. `app/` is not an npm workspace — run `npm install` separately inside `app/`.
 2. GitHub issues, PRs, and commit messages are written in English — matches all project docs (ARCHITECTURE.md, AGENTS.md, DESIGN.md). Only the in-app UI copy is German (see `app/DESIGN.md`'s Language & Tone section).
+2a. Code itself is English-only — file names, component/type/interface names, variables, props, functions, route/tab ids, testIDs, etc. must all be English, with no exceptions. The **only** place German is allowed is user-facing UI text (e.g. strings passed to `<Text>`). Do not name a screen or component after its German UI label (e.g. use `RewardsScreen.tsx`, not `ErfolgeScreen.tsx`).
 3. No secrets in code. Once real config/credentials exist, they belong in AWS SSM Parameter Store or Lambda environment variables — never hardcoded.
 4. All infrastructure is defined in CDK TypeScript — never create or modify AWS resources via the Console.
 5. Never run `cdk deploy`. Validate infrastructure changes with `npx cdk synth` only — deployment is a manual, deliberate action by the developer.

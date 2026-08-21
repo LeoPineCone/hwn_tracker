@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabBar, TAB_ORDER, type TabId } from '../components/TabBar';
-import { KarteScreen } from '../screens/KarteScreen';
-import { ErfolgeScreen } from '../screens/ErfolgeScreen';
-import { ProfilScreen } from '../screens/ProfilScreen';
+import { MapScreen } from '../screens/MapScreen';
+import { RewardsScreen } from '../screens/RewardsScreen';
+import { ProfileScreen } from '../screens/ProfileScreen';
 
 const SCREEN_COMPONENTS: Record<TabId, React.ComponentType> = {
-  karte: KarteScreen,
-  erfolge: ErfolgeScreen,
-  profil: ProfilScreen,
+  map: MapScreen,
+  rewards: RewardsScreen,
+  profile: ProfileScreen,
 };
 
 export function TabNavigator(): React.JSX.Element {
-  const [activeTab, setActiveTab] = useState<TabId>('karte');
+  const [activeTab, setActiveTab] = useState<TabId>('map');
 
   return (
     <SafeAreaView

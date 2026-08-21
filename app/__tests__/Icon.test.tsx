@@ -7,21 +7,21 @@ import ReactTestRenderer from 'react-test-renderer';
 import Svg, { Path } from 'react-native-svg';
 import { Icon, ICON_PATHS } from '../src/components/Icon';
 
-test('renders the vendored karte paths as separate Path elements in order', async () => {
+test('renders the vendored map paths as separate Path elements in order', async () => {
   let renderer: ReactTestRenderer.ReactTestRenderer;
   await ReactTestRenderer.act(() => {
-    renderer = ReactTestRenderer.create(<Icon name="karte" color="#c67139" />);
+    renderer = ReactTestRenderer.create(<Icon name="map" color="#c67139" />);
   });
 
   const paths = renderer!.root.findAllByType(Path);
   expect(paths).toHaveLength(2);
-  expect(paths.map(p => p.props.d)).toEqual([...ICON_PATHS.karte]);
+  expect(paths.map(p => p.props.d)).toEqual([...ICON_PATHS.map]);
 });
 
 test('renders the Svg with the vendored viewBox/fill/stroke attributes', async () => {
   let renderer: ReactTestRenderer.ReactTestRenderer;
   await ReactTestRenderer.act(() => {
-    renderer = ReactTestRenderer.create(<Icon name="profil" color="#82796a" />);
+    renderer = ReactTestRenderer.create(<Icon name="profile" color="#82796a" />);
   });
 
   const svg = renderer!.root.findByType(Svg);
@@ -37,7 +37,7 @@ test('renders the Svg with the vendored viewBox/fill/stroke attributes', async (
 test('passes the color prop through as the Svg stroke', async () => {
   let renderer: ReactTestRenderer.ReactTestRenderer;
   await ReactTestRenderer.act(() => {
-    renderer = ReactTestRenderer.create(<Icon name="erfolge" color="#3d472b" />);
+    renderer = ReactTestRenderer.create(<Icon name="rewards" color="#3d472b" />);
   });
 
   const svg = renderer!.root.findByType(Svg);

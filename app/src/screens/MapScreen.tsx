@@ -3,27 +3,27 @@ import { Text, View } from 'react-native';
 import { ScreenShell } from '../components/ScreenShell';
 import { SegmentedControl, SegmentOption } from '../components/SegmentedControl';
 
-export type KarteView = 'karte' | 'stempel';
+export type MapViewMode = 'map' | 'stamp';
 
-const VIEW_OPTIONS: readonly SegmentOption<KarteView>[] = [
-  { id: 'karte', label: 'Karte' },
-  { id: 'stempel', label: 'Stempel' },
+const VIEW_OPTIONS: readonly SegmentOption<MapViewMode>[] = [
+  { id: 'map', label: 'Karte' },
+  { id: 'stamp', label: 'Stempel' },
 ];
 
-export function KarteScreen(): React.JSX.Element {
-  const [view, setView] = useState<KarteView>('karte');
+export function MapScreen(): React.JSX.Element {
+  const [view, setView] = useState<MapViewMode>('map');
 
   return (
-    <ScreenShell title="Karte" testID="screen-karte">
+    <ScreenShell title="Karte" testID="screen-map">
       <SegmentedControl
         options={VIEW_OPTIONS}
         value={view}
         onChange={setView}
-        testIDPrefix="karte-segment"
+        testIDPrefix="map-segment"
       />
       <View className="bg-surface rounded-md p-[18px]">
-        <Text testID="karte-view-readout">
-          {view === 'karte'
+        <Text testID="map-view-readout">
+          {view === 'map'
             ? 'Kartenansicht kommt bald.'
             : 'Stempelansicht kommt bald.'}
         </Text>

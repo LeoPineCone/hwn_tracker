@@ -27,68 +27,68 @@ async function createApp(): Promise<ReactTestRenderer.ReactTestRenderer> {
 test('Karte is the default active tab', async () => {
   const tree = await createApp();
 
-  expect(node(tree, 'tab-karte').props.accessibilityState.selected).toBe(true);
-  expect(node(tree, 'tab-erfolge').props.accessibilityState.selected).toBe(false);
-  expect(node(tree, 'tab-profil').props.accessibilityState.selected).toBe(false);
+  expect(node(tree, 'tab-map').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'tab-rewards').props.accessibilityState.selected).toBe(false);
+  expect(node(tree, 'tab-profile').props.accessibilityState.selected).toBe(false);
 
-  expect(node(tree, 'tabslot-karte').props.style.display).toBe('flex');
-  expect(node(tree, 'tabslot-erfolge').props.style.display).toBe('none');
-  expect(node(tree, 'tabslot-profil').props.style.display).toBe('none');
+  expect(node(tree, 'tabslot-map').props.style.display).toBe('flex');
+  expect(node(tree, 'tabslot-rewards').props.style.display).toBe('none');
+  expect(node(tree, 'tabslot-profile').props.style.display).toBe('none');
 });
 
 test('tapping Erfolge activates it', async () => {
   const tree = await createApp();
 
-  await press(tree, 'tab-erfolge');
+  await press(tree, 'tab-rewards');
 
-  expect(node(tree, 'tab-erfolge').props.accessibilityState.selected).toBe(true);
-  expect(node(tree, 'tab-karte').props.accessibilityState.selected).toBe(false);
+  expect(node(tree, 'tab-rewards').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'tab-map').props.accessibilityState.selected).toBe(false);
 
-  expect(node(tree, 'tabslot-erfolge').props.style.display).toBe('flex');
-  expect(node(tree, 'tabslot-karte').props.style.display).toBe('none');
+  expect(node(tree, 'tabslot-rewards').props.style.display).toBe('flex');
+  expect(node(tree, 'tabslot-map').props.style.display).toBe('none');
 });
 
 test('tapping Profil activates it', async () => {
   const tree = await createApp();
 
-  await press(tree, 'tab-profil');
+  await press(tree, 'tab-profile');
 
-  expect(node(tree, 'tab-profil').props.accessibilityState.selected).toBe(true);
-  expect(node(tree, 'tab-karte').props.accessibilityState.selected).toBe(false);
+  expect(node(tree, 'tab-profile').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'tab-map').props.accessibilityState.selected).toBe(false);
 
-  expect(node(tree, 'tabslot-profil').props.style.display).toBe('flex');
-  expect(node(tree, 'tabslot-karte').props.style.display).toBe('none');
+  expect(node(tree, 'tabslot-profile').props.style.display).toBe('flex');
+  expect(node(tree, 'tabslot-map').props.style.display).toBe('none');
 });
 
 test('tapping back to Karte restores it', async () => {
   const tree = await createApp();
 
-  await press(tree, 'tab-erfolge');
-  await press(tree, 'tab-karte');
+  await press(tree, 'tab-rewards');
+  await press(tree, 'tab-map');
 
-  expect(node(tree, 'tab-karte').props.accessibilityState.selected).toBe(true);
-  expect(node(tree, 'tabslot-karte').props.style.display).toBe('flex');
+  expect(node(tree, 'tab-map').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'tabslot-map').props.style.display).toBe('flex');
 });
 
 test('segmented control defaults to Karte', async () => {
   const tree = await createApp();
 
-  expect(node(tree, 'karte-segment-karte').props.accessibilityState.selected).toBe(true);
-  expect(node(tree, 'karte-segment-stempel').props.accessibilityState.selected).toBe(false);
-  expect(node(tree, 'karte-view-readout').props.children).toBe('Kartenansicht kommt bald.');
+  expect(node(tree, 'map-segment-map').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'map-segment-stamp').props.accessibilityState.selected).toBe(false);
+  expect(node(tree, 'map-view-readout').props.children).toBe('Kartenansicht kommt bald.');
 });
 
 test('segmented control selection survives a tab round trip', async () => {
   const tree = await createApp();
 
-  await press(tree, 'karte-segment-stempel');
+  await press(tree, 'map-segment-stamp');
 
-  expect(node(tree, 'karte-segment-stempel').props.accessibilityState.selected).toBe(true);
-  expect(node(tree, 'karte-view-readout').props.children).toBe('Stempelansicht kommt bald.');
+  expect(node(tree, 'map-segment-stamp').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'map-view-readout').props.children).toBe('Stempelansicht kommt bald.');
 
-  await press(tree, 'tab-erfolge');
-  await press(tree, 'tab-karte');
+  await press(tree, 'tab-rewards');
+  await press(tree, 'tab-map');
 
-  expect(node(tree, 'karte-segment-stempel').props.accessibilityState.selected).toBe(true);
-  expect(node(tree, 'karte-view-readout').props.children).toBe('Stempelansicht kommt bald.');
+  expect(node(tree, 'map-segment-stamp').props.accessibilityState.selected).toBe(true);
+  expect(node(tree, 'map-view-readout').props.children).toBe('Stempelansicht kommt bald.');
 });

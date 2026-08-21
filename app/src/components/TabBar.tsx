@@ -3,14 +3,14 @@ import { Pressable, Text, View } from 'react-native';
 import { Icon } from './Icon';
 import colors from '../theme/colors.json';
 
-export type TabId = 'karte' | 'erfolge' | 'profil';
+export type TabId = 'map' | 'rewards' | 'profile';
 
-export const TAB_ORDER: readonly TabId[] = ['karte', 'erfolge', 'profil'];
+export const TAB_ORDER: readonly TabId[] = ['map', 'rewards', 'profile'];
 
 const TAB_LABELS: Record<TabId, string> = {
-  karte: 'Karte',
-  erfolge: 'Erfolge',
-  profil: 'Profil',
+  map: 'Karte',
+  rewards: 'Erfolge',
+  profile: 'Profil',
 };
 
 const ACTIVE_ICON_COLOR = colors['accent-2']['800'];
